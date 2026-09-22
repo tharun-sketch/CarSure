@@ -1,0 +1,6 @@
+insurance_id,vehicle_id,insurance_company,insurance_status,policy_number,claim_count,claim_amount,insurance_from,insurance_to,claim_type,notes
+INS001,CAR001,ICICI Lombard,Expired,POL001,1,45000,2025-07-15,2026-07-14,Accident,Development/sample record
+INS002,CAR002,HDFC ERGO,Active,POL002,1,120000,2026-04-10,2027-04-09,Accident,Development/sample record
+INS003,CAR003,Bajaj Allianz,Active,POL003,0,0,2025-10-05,2026-10-04,None,Development/sample record
+INS004,CAR004,New India Assurance,Active,POL004,0,0,2026-03-20,2027-03-19,None,Development/sample record
+INS005,CAR005,United India Insurance,Active,POL005,0,0,2026-01-12,2027-01-11,None,Development/sample record

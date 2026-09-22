@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarSure - Used Car Valuation & Vehicle History Platform</title>
+
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+.header {
+    background: #111827;
+    color: white;
+    padding: 22px 40px;
+}
+.header h1 { margin: 0; font-size: 28px; }
+.header p { margin: 5px 0 0; color: #cbd5e1; }
+
+.container {
+    max-width: 1150px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+.section, .vehicle-card, .price-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+.section { padding: 25px; margin-bottom: 20px; }
+.section h2 { margin-top: 0; }
+
+.vehicle-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.vehicle-option {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    background: #f8fafc;
+}
+.vehicle-option strong { display: block; margin-bottom: 6px; }
+.vehicle-actions { display:flex; gap:8px; margin-top:10px; }
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-dark { background:#111827; color:white; }
+.btn-blue { background:#2563eb; color:white; }
+.btn-green { background:#15803d; color:white; }
+.btn-light { background:#e2e8f0; color:#111827; }
+button:disabled { opacity:.55; cursor:not-allowed; }
+
+.vehicle-card { padding:25px; margin-bottom:20px; }
+.vehicle-title { font-size:26px; font-weight:bold; }
+.vehicle-info { margin-top:8px; color:#64748b; }
+
+.valuation-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+.price-card { padding:22px; }
+.price-card h3 { margin:0 0 8px; color:#64748b; font-size:14px; }
+.price { font-size:25px; font-weight:bold; }
+
+.details-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+.detail {
+    background:#f8fafc;
+    padding:15px;
+    border-radius:8px;
+}
+.detail strong {
+    display:block;
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+.form-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+.form-group label {
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+.form-group input, .form-group select {
+    width:100%;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    background:white;
+}
+
+.status {
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    background:#f1f5f9;
+}
+.success { background:#dcfce7; color:#166534; }
+.error { background:#fee2e2; color:#991b1b; }
+
+.history-item {
+    border-left:4px solid #334155;
+    padding:12px 15px;
+    margin-bottom:12px;
+    background:#f8fafc;
+    border-radius:4px;
+}
+
+.table-wrap { overflow-x:auto; }
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+th, td {
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+    text-align:left;
+    white-space:nowrap;
+}
+th { background:#f8fafc; }
+
+.hidden { display:none !important; }
+.muted { color:#64748b; }
+.loading { text-align:center; padding:30px; }
+.modal-overlay {
+    position:fixed; inset:0; background:rgba(15,23,42,.62);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:1000;
+}
+.modal-card {
+    background:white; width:min(850px,100%); max-height:90vh; overflow:auto;
+    border-radius:14px; padding:25px; box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+.modal-header { display:flex; justify-content:space-between; align-items:center; gap:15px; }
+.modal-header h2 { margin:0; }
+.modal-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:18px; }
+.modal-field { background:#f8fafc; padding:13px; border-radius:8px; }
+.modal-field strong { display:block; color:#64748b; font-size:12px; margin-bottom:4px; }
+.history-link { color:#2563eb; background:none; padding:0; text-decoration:underline; font-weight:700; }
+.comparison-table th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background:#f8fafc;
+}
+.comparison-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background:white;
+    font-weight:700;
+}
+.comparison-vehicle-head {
+    min-width:220px;
+}
+.comparison-note {
+    margin-top:12px;
+    color:#64748b;
+    font-size:13px;
+}
+
+@media(max-width:650px) { .modal-grid { grid-template-columns:1fr; } }
+
+@media(max-width:850px) {
+    .valuation-grid, .details-grid, .form-grid, .vehicle-list {
+        grid-template-columns:1fr;
+    }
+    .header { padding:20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="header">
+    <h1>CarSure</h1>
+    <p>Used Car Valuation & Vehicle History Platform</p>
+</div>
+
+<div class="container">
+
+    <!-- VEHICLE SEARCH & COMPARISON -->
+    <div class="section">
+        <h2>Vehicle Search & Comparison</h2>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
+            <button class="btn-light" onclick="clearComparison()">Clear</button>
+            <button class="btn-dark" onclick="compareSelected()">Compare Selected</button>
+            <span id="compareStatus" class="muted"></span>
+        </div>
+
+        <div id="vehicleList" class="vehicle-list">
+            <div class="loading">Loading vehicles...</div>
+        </div>
+    </div>
+
+    <!-- VEHICLE COMPARISON -->
+    <div id="comparisonSection" class="section hidden">
+        <h2>Vehicle Comparison</h2>
+        <div id="comparisonContent">
+            <div class="loading">Select vehicles and click Compare Selected.</div>
+        </div>
+    </div>
+
+    <!-- VEHICLE REPORT -->
+    <div id="reportSection" class="hidden">
+
+        <div class="vehicle-card">
+            <div class="vehicle-title" id="vehicleName"></div>
+            <div class="vehicle-info" id="vehicleInfo"></div>
+        </div>
+
+        <div class="valuation-grid">
+            <div class="price-card">
+                <h3>AI Estimated Value</h3>
+                <div class="price" id="aiPrice">â€”</div>
+            </div>
+            <div class="price-card">
+                <h3>Fair Buying Range</h3>
+                <div class="price" id="fairRange">â€”</div>
+            </div>
+            <div class="price-card">
+                <h3>Dealer Asking Price</h3>
+                <div class="price" id="dealerPrice">â€”</div>
+            </div>
+            <div class="price-card">
+                <h3>Market Listing Average</h3>
+                <div class="price" id="marketAverage">â€”</div>
+            </div>
+            <div class="price-card">
+                <h3>Dealer Price Difference</h3>
+                <div class="price" id="dealerDifference">â€”</div>
+            </div>
+            <div class="price-card">
+                <h3>Vehicle History Score</h3>
+                <div class="price" id="historyScore">â€”</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Vehicle Summary</h2>
+            <div class="details-grid">
+                <div class="detail"><strong>Accident Records</strong><span id="accidentCount"></span></div>
+                <div class="detail"><strong>Service Records</strong><span id="serviceCount"></span></div>
+                <div class="detail"><strong>Insurance Claims</strong><span id="claimCount"></span></div>
+                <div class="detail"><strong>Owners</strong><span id="summaryOwners"></span></div>
+                <div class="detail"><strong>Current KM</strong><span id="summaryKm"></span></div>
+                <div class="detail"><strong>Data Confidence</strong><span id="dataConfidence"></span></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Vehicle Details</h2>
+            <div class="details-grid">
+                <div class="detail"><strong>Brand</strong><span id="brand"></span></div>
+                <div class="detail"><strong>Model</strong><span id="model"></span></div>
+                <div class="detail"><strong>Variant</strong><span id="variant"></span></div>
+                <div class="detail"><strong>Fuel</strong><span id="fuel"></span></div>
+                <div class="detail"><strong>Transmission</strong><span id="transmission"></span></div>
+                <div class="detail"><strong>Manufacturing Year</strong><span id="year"></span></div>
+                <div class="detail"><strong>Current KM</strong><span id="km"></span></div>
+                <div class="detail"><strong>Owners</strong><span id="owners"></span></div>
+                <div class="detail"><strong>Registration Location</strong><span id="location"></span></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Accident History</h2>
+            <div id="accidents"></div>
+        </div>
+
+        <div class="section">
+            <h2>Service History</h2>
+            <div id="services"></div>
+        </div>
+
+        <div class="section">
+            <h2>Insurance</h2>
+            <div id="insurance"></div>
+        </div>
+
+        <div class="section">
+            <h2>Condition</h2>
+            <div id="condition"></div>
+        </div>
+
+        <div class="section">
+            <h2>KM Verification</h2>
+            <div id="kmVerification"></div>
+        </div>
+    </div>
+
+    <!-- AI VALUATION -->
+    <div class="section">
+        <h2>AI Vehicle Valuation</h2>
+        <p class="muted">Enter a vehicle's basic details to generate an AI-based development estimate.</p>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Brand</label>
+                <input id="vBrand" placeholder="e.g. Maruti Suzuki">
+            </div>
+            <div class="form-group">
+                <label>Model</label>
+                <input id="vModel" placeholder="e.g. Swift">
+            </div>
+            <div class="form-group">
+                <label>Variant</label>
+                <input id="vVariant" placeholder="e.g. VXi">
+            </div>
+            <div class="form-group">
+                <label>Fuel Type</label>
+                <select id="vFuel">
+                    <option value="">Select fuel</option>
+                    <option>Petrol</option>
+                    <option>Diesel</option>
+                    <option>CNG</option>
+                    <option>Electric</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Transmission</label>
+                <select id="vTransmission">
+                    <option value="">Select transmission</option>
+                    <option>Manual</option>
+                    <option>Automatic</option>
+                    <option>AMT</option>
+                    <option>CVT</option>
+                    <option>DCT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Manufacture Year</label>
+                <input id="vYear" type="number" min="1990" max="2026" placeholder="2021">
+            </div>
+            <div class="form-group">
+                <label>Current KM</label>
+                <input id="vKm" type="number" min="0" placeholder="40000">
+            </div>
+            <div class="form-group">
+                <label>Owner Count</label>
+                <input id="vOwners" type="number" min="1" max="10" placeholder="1">
+            </div>
+            <div class="form-group">
+                <label>Registration Location</label>
+                <input id="vLocation" placeholder="Hyderabad">
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+            <button class="btn-blue" onclick="estimateVehicle()">Estimate Vehicle Value</button>
+            <button class="btn-green" id="saveValuationBtn" onclick="saveValuation()" disabled>Save Valuation</button>
+            <button class="btn-light" onclick="clearValuation()">Clear</button>
+        </div>
+
+        <div id="valuationStatus" class="status hidden"></div>
+
+        <div id="valuationResult" class="hidden" style="margin-top:20px;">
+            <div class="valuation-grid">
+                <div class="price-card">
+                    <h3>AI Estimated Value</h3>
+                    <div class="price" id="estimateValue"></div>
+                </div>
+                <div class="price-card">
+                    <h3>Fair Buying Range</h3>
+                    <div class="price" id="estimateRange"></div>
+                </div>
+                <div class="price-card">
+                    <h3>Vehicle Age</h3>
+                    <div class="price" id="estimateAge"></div>
+                </div>
+                <div class="price-card">
+                    <h3>Current KM</h3>
+                    <div class="price" id="estimateKm"></div>
+                </div>
+            </div>
+            <p class="muted" id="estimateNote"></p>
+        </div>
+    </div>
+
+    <!-- VALUATION HISTORY -->
+    <div class="section">
+        <h2>Valuation History</h2>
+        <button class="btn-dark" onclick="loadValuationHistory()">Refresh History</button>
+        <div id="valuationHistory" style="margin-top:18px;">
+            <div class="loading">Loading valuation history...</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- SAVED VALUATION DETAILS MODAL -->
+<div id="valuationModal" class="modal-overlay hidden" onclick="closeValuationModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Saved Valuation Details</h2>
+            <button class="btn-light" onclick="closeValuationModal()">Close</button>
+        </div>
+        <div id="valuationModalContent" style="margin-top:15px;">
+            <div class="loading">Loading valuation details...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentEstimate = null;
+let selectedVehicles = new Set();
+
+function money(value) {
+    if (value === null || value === undefined || value === "") return "â€”";
+    return "&#8377;" + Number(value).toLocaleString("en-IN", {
+        maximumFractionDigits: 0
+    });
+}
+
+function num(value) {
+    if (value === null || value === undefined || value === "") return "â€”";
+    return Number(value).toLocaleString("en-IN");
+}
+
+async function getJson(url, options = {}) {
+    const response = await fetch(url, options);
+    const text = await response.text();
+
+    let data;
+    try {
+        data = JSON.parse(text);
+    } catch (e) {
+        throw new Error(
+            "Server returned HTML instead of JSON for " + url +
+            ". Check the Flask route."
+        );
+    }
+
+    if (!response.ok || data.success === false) {
+        throw new Error(data.error || "Request failed.");
+    }
+
+    return data;
+}
+
+async function loadVehicles() {
+    const container = document.getElementById("vehicleList");
+
+    try {
+        const data = await getJson("/api/vehicles");
+
+        if (!Array.isArray(data.vehicles) || data.vehicles.length === 0) {
+            container.innerHTML = "<p>No vehicles found.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.vehicles.forEach(v => {
+            const id = "vehicle_" + v.vehicle_id;
+
+            container.insertAdjacentHTML("beforeend", `
+                <div class="vehicle-option">
+                    <label style="display:block;">
+                        <input type="checkbox" id="${id}"
+                            onchange="toggleVehicle('${v.vehicle_id}', this.checked)">
+                        <strong>${v.vehicle_id} â€” ${v.brand} ${v.model} ${v.variant}</strong>
+                    </label>
+                    <span class="muted">
+                        ${v.manufacture_year} â€¢ ${num(v.current_km)} KM â€¢ ${v.registration_location}
+                    </span>
+                    <div class="vehicle-actions">
+                        <button class="btn-dark" onclick="loadReport('${v.vehicle_id}')">Open</button>
+                        <button class="btn-light" onclick="loadReport('${v.vehicle_id}')">View Report</button>
+                    </div>
+                </div>
+            `);
+        });
+    } catch (error) {
+        container.innerHTML = `<div class="error">${error.message}</div>`;
+    }
+}
+
+function toggleVehicle(id, checked) {
+    if (checked) selectedVehicles.add(id);
+    else selectedVehicles.delete(id);
+
+    document.getElementById("compareStatus").textContent =
+        selectedVehicles.size + " vehicle(s) selected";
+}
+
+function clearComparison() {
+    selectedVehicles.clear();
+    document.querySelectorAll("#vehicleList input[type=checkbox]")
+        .forEach(x => x.checked = false);
+    document.getElementById("compareStatus").textContent = "";
+
+    const section = document.getElementById("comparisonSection");
+    const content = document.getElementById("comparisonContent");
+    section.classList.add("hidden");
+    content.innerHTML = '<div class="loading">Select vehicles and click Compare Selected.</div>';
+}
+
+async function compareSelected() {
+    if (selectedVehicles.size < 2) {
+        alert("Select at least 2 vehicles to compare.");
+        return;
+    }
+
+    const section = document.getElementById("comparisonSection");
+    const content = document.getElementById("comparisonContent");
+    const ids = Array.from(selectedVehicles);
+
+    section.classList.remove("hidden");
+    section.scrollIntoView({behavior:"smooth"});
+    content.innerHTML = '<div class="loading">Loading vehicle comparison...</div>';
+
+    try {
+        const reports = await Promise.all(
+            ids.map(id => getJson("/api/report/" + encodeURIComponent(id)))
+        );
+
+        renderComparison(reports);
+    } catch (error) {
+        content.innerHTML = `<div class="error">${error.message}</div>`;
+    }
+}
+
+function comparisonValue(value) {
+    return value === null || value === undefined || value === "" ? "—" : value;
+}
+
+function comparisonMoney(value) {
+    return value === null || value === undefined || value === ""
+        ? "—"
+        : money(value);
+}
+
+function comparisonFairRange(data) {
+    if (!data.fair_buying_range) return "—";
+    return `${money(data.fair_buying_range.min)} - ${money(data.fair_buying_range.max)}`;
+}
+
+function comparisonHistoryScore(data) {
+    return data.vehicle_history_score
+        ? `${data.vehicle_history_score.score}/100`
+        : "—";
+}
+
+function comparisonConfidence(data) {
+    return data.data_confidence
+        ? `${data.data_confidence.status} (${data.data_confidence.percentage}%)`
+        : "—";
+}
+
+function renderComparison(reports) {
+    const content = document.getElementById("comparisonContent");
+
+    if (!reports || reports.length < 2) {
+        content.innerHTML = '<div class="error">At least 2 vehicle reports are required for comparison.</div>';
+        return;
+    }
+
+    const rows = [
+        ["Vehicle ID", data => comparisonValue(data.vehicle?.vehicle_id)],
+        ["Vehicle", data => `${comparisonValue(data.vehicle?.brand)} ${comparisonValue(data.vehicle?.model)} ${comparisonValue(data.vehicle?.variant)}`],
+        ["Manufacture Year", data => comparisonValue(data.vehicle?.manufacture_year)],
+        ["Current KM", data => `${num(data.vehicle?.current_km)} KM`],
+        ["Owners", data => comparisonValue(data.vehicle?.owner_count)],
+        ["Fuel", data => comparisonValue(data.vehicle?.fuel_type)],
+        ["Transmission", data => comparisonValue(data.vehicle?.transmission)],
+        ["Registration Location", data => comparisonValue(data.vehicle?.registration_location)],
+        ["AI Estimated Value", data => comparisonMoney(data.ai_predicted_value)],
+        ["Fair Buying Range", data => comparisonFairRange(data)],
+        ["Dealer Asking Price", data => comparisonMoney(data.dealer_asking_price)],
+        ["Market Listing Average", data => comparisonMoney(data.market_listing_average)],
+        ["Dealer Price Difference", data => comparisonMoney(data.dealer_price_difference)],
+        ["Vehicle History Score", data => comparisonHistoryScore(data)],
+        ["Accident Records", data => data.accidents ? data.accidents.length : 0],
+        ["Service Records", data => data.service_history ? data.service_history.length : 0],
+        ["Insurance Claims", data => data.insurance?.claim_count ?? 0],
+        ["Data Confidence", data => comparisonConfidence(data)]
+    ];
+
+    const header = reports.map(data => {
+        const v = data.vehicle || {};
+        return `
+            <th class="comparison-vehicle-head">
+                ${comparisonValue(v.vehicle_id)}<br>
+                ${comparisonValue(v.brand)} ${comparisonValue(v.model)} ${comparisonValue(v.variant)}
+            </th>
+        `;
+    }).join("");
+
+    const body = rows.map(([label, getter]) => `
+        <tr>
+            <td>${label}</td>
+            ${reports.map(data => `<td>${getter(data)}</td>`).join("")}
+        </tr>
+    `).join("");
+
+    content.innerHTML = `
+        <div class="table-wrap">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        ${header}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${body}
+                </tbody>
+            </table>
+        </div>
+        <p class="comparison-note">
+            Comparison uses the vehicle records currently stored in CarSure. AI valuation figures are development/sample estimates.
+        </p>
+    `;
+}
+
+async function loadReport(vehicleId) {
+    const section = document.getElementById("reportSection");
+    section.classList.remove("hidden");
+    section.scrollIntoView({behavior:"smooth"});
+
+    try {
+        const data = await getJson("/api/report/" + encodeURIComponent(vehicleId));
+        const v = data.vehicle;
+
+        document.getElementById("vehicleName").textContent =
+            `${v.brand} ${v.model} ${v.variant}`;
+
+        document.getElementById("vehicleInfo").textContent =
+            `${v.manufacture_year} â€¢ ${v.current_km.toLocaleString("en-IN")} KM â€¢ ${v.registration_location}`;
+
+        document.getElementById("aiPrice").textContent =
+            money(data.ai_predicted_value);
+
+        if (data.fair_buying_range) {
+            document.getElementById("fairRange").textContent =
+                `${money(data.fair_buying_range.min)} - ${money(data.fair_buying_range.max)}`;
+        } else {
+            document.getElementById("fairRange").textContent = "â€”";
+        }
+
+        document.getElementById("dealerPrice").textContent =
+            money(data.dealer_asking_price);
+
+        document.getElementById("marketAverage").textContent =
+            money(data.market_listing_average);
+
+        document.getElementById("dealerDifference").textContent =
+            money(data.dealer_price_difference);
+
+        document.getElementById("historyScore").textContent =
+            data.vehicle_history_score
+                ? `${data.vehicle_history_score.score}/100`
+                : "â€”";
+
+        document.getElementById("accidentCount").textContent =
+            data.accidents.length;
+
+        document.getElementById("serviceCount").textContent =
+            data.service_history.length;
+
+        document.getElementById("claimCount").textContent =
+            data.insurance?.claim_count ?? 0;
+
+        document.getElementById("summaryOwners").textContent =
+            v.owner_count;
+
+        document.getElementById("summaryKm").textContent =
+            num(v.current_km) + " KM";
+
+        document.getElementById("dataConfidence").textContent =
+            data.data_confidence
+                ? `${data.data_confidence.status} (${data.data_confidence.percentage}%)`
+                : "â€”";
+
+        document.getElementById("brand").textContent = v.brand;
+        document.getElementById("model").textContent = v.model;
+        document.getElementById("variant").textContent = v.variant;
+        document.getElementById("fuel").textContent = v.fuel_type;
+        document.getElementById("transmission").textContent = v.transmission;
+        document.getElementById("year").textContent = v.manufacture_year;
+        document.getElementById("km").textContent = num(v.current_km) + " KM";
+        document.getElementById("owners").textContent = v.owner_count;
+        document.getElementById("location").textContent = v.registration_location;
+
+        renderAccidents(data.accidents);
+        renderServices(data.service_history);
+        renderInsurance(data.insurance);
+        renderCondition(data.condition);
+        renderKmVerification(data.km_verification);
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function renderAccidents(items) {
+    const el = document.getElementById("accidents");
+
+    if (!items || items.length === 0) {
+        el.innerHTML = "<p>No accident records available.</p>";
+        return;
+    }
+
+    el.innerHTML = items.map(a => `
+        <div class="history-item">
+            <strong>${a.accident_date || "Date unavailable"}</strong><br>
+            Side: ${a.accident_side || "N/A"}<br>
+            Affected Area: ${a.affected_area || "N/A"}<br>
+            Severity: ${a.severity || "N/A"}<br>
+            Repair: ${a.repair_details || "N/A"}<br>
+            Insurance Claim: ${a.insurance_claim || "N/A"}<br>
+            Claim Amount: ${money(a.claim_amount)}<br>
+            Evidence: ${a.evidence_source || "N/A"}
+        </div>
+    `).join("");
+}
+
+function renderServices(items) {
+    const el = document.getElementById("services");
+
+    if (!items || items.length === 0) {
+        el.innerHTML = "<p>No service records available.</p>";
+        return;
+    }
+
+    el.innerHTML = items.map(s => `
+        <div class="history-item">
+            <strong>${s.service_date || "Date unavailable"}</strong><br>
+            Type: ${s.service_type || "N/A"}<br>
+            Odometer: ${num(s.odometer_km)} KM<br>
+            Centre: ${s.service_center || s.service_centre || "N/A"}<br>
+            Work: ${s.work_performed || "N/A"}<br>
+            Parts: ${s.parts_replaced || "N/A"}<br>
+            Cost: ${money(s.service_cost)}
+        </div>
+    `).join("");
+}
+
+function renderInsurance(p) {
+    const el = document.getElementById("insurance");
+
+    if (!p) {
+        el.innerHTML = "<p>No insurance records available.</p>";
+        return;
+    }
+
+    el.innerHTML = `
+        <div class="history-item">
+            <strong>${p.insurance_company || "Insurance Company"}</strong><br>
+            Status: ${p.insurance_status || "N/A"}<br>
+            Policy: ${p.policy_number || "N/A"}<br>
+            Claims: ${p.claim_count ?? 0}<br>
+            Claim Amount: ${money(p.claim_amount)}<br>
+            From: ${p.insurance_from || "N/A"}<br>
+            To: ${p.insurance_to || "N/A"}<br>
+            Source: ${p.claim_count_source || "Insurance record"}
+        </div>
+    `;
+}
+
+function renderCondition(c) {
+    const el = document.getElementById("condition");
+
+    if (!c) {
+        el.innerHTML = "<p>No condition inspection record available.</p>";
+        return;
+    }
+
+    const labels = {
+        engine_condition:"Engine",
+        gearbox_condition:"Gearbox",
+        brake_condition:"Brakes",
+        tyre_condition:"Tyres",
+        battery_condition:"Battery",
+        suspension_condition:"Suspension",
+        exterior_condition:"Exterior",
+        interior_condition:"Interior",
+        flood_damage:"Flood Damage",
+        fire_damage:"Fire Damage",
+        modifications:"Modifications"
+    };
+
+    el.innerHTML = Object.entries(labels).map(([key,label]) =>
+        `<div class="detail" style="display:inline-block;width:31%;margin:1%;">
+            <strong>${label}</strong>${c[key] ?? "N/A"}
+        </div>`
+    ).join("");
+}
+
+function renderKmVerification(km) {
+    const el = document.getElementById("kmVerification");
+
+    if (!km) {
+        el.innerHTML = "<p>No KM verification data available.</p>";
+        return;
+    }
+
+    el.innerHTML = `
+        <div class="details-grid">
+            <div class="detail"><strong>Current KM</strong>${num(km.current_km)} KM</div>
+            <div class="detail"><strong>Latest Documented Service KM</strong>${num(km.latest_documented_service_km)} KM</div>
+            <div class="detail"><strong>Status</strong>${km.status}</div>
+        </div>
+        <p class="muted">${km.evidence_note || ""}</p>
+        ${
+            km.issues && km.issues.length
+            ? `<div class="error">${km.issues.join("<br>")}</div>`
+            : ""
+        }
+    `;
+}
+
+function valuationInput() {
+    return {
+        brand: document.getElementById("vBrand").value.trim(),
+        model: document.getElementById("vModel").value.trim(),
+        variant: document.getElementById("vVariant").value.trim(),
+        fuel_type: document.getElementById("vFuel").value,
+        transmission: document.getElementById("vTransmission").value,
+        manufacture_year: Number(document.getElementById("vYear").value),
+        current_km: Number(document.getElementById("vKm").value),
+        owner_count: Number(document.getElementById("vOwners").value),
+        registration_location: document.getElementById("vLocation").value.trim()
+    };
+}
+
+function showStatus(message, success = true) {
+    const el = document.getElementById("valuationStatus");
+    el.classList.remove("hidden", "success", "error");
+    el.classList.add(success ? "success" : "error");
+    el.textContent = message;
+}
+
+async function estimateVehicle() {
+    try {
+        const input = valuationInput();
+
+        const data = await getJson("/api/estimate", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(input)
+        });
+
+        currentEstimate = input;
+
+        document.getElementById("estimateValue").textContent =
+            money(data.ai_predicted_value);
+
+        document.getElementById("estimateRange").textContent =
+            `${money(data.fair_buying_range.min)} - ${money(data.fair_buying_range.max)}`;
+
+        document.getElementById("estimateAge").textContent =
+            data.vehicle_age + " years";
+
+        document.getElementById("estimateKm").textContent =
+            num(input.current_km) + " KM";
+
+        document.getElementById("estimateNote").textContent =
+            data.depreciation_note;
+
+        document.getElementById("valuationResult").classList.remove("hidden");
+        document.getElementById("saveValuationBtn").disabled = false;
+
+        showStatus("Estimate generated. Estimate ready to save to CarSure.", true);
+
+    } catch (error) {
+        currentEstimate = null;
+        document.getElementById("saveValuationBtn").disabled = true;
+        showStatus(error.message, false);
+    }
+}
+
+async function saveValuation() {
+    if (!currentEstimate) {
+        showStatus("Generate an estimate first.", false);
+        return;
+    }
+
+    try {
+        const data = await getJson("/api/save-valuation", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(currentEstimate)
+        });
+
+        showStatus(
+            `Saved successfully. Valuation ID: ${data.valuation_id}`,
+            true
+        );
+
+        await loadValuationHistory();
+
+    } catch (error) {
+        showStatus(error.message, false);
+    }
+}
+
+async function openValuationDetails(valuationId) {
+    const modal = document.getElementById("valuationModal");
+    const content = document.getElementById("valuationModalContent");
+
+    modal.classList.remove("hidden");
+    content.innerHTML = '<div class="loading">Loading valuation details...</div>';
+
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+
+        let data;
+        try {
+            data = await getJson(
+                "/api/valuation/" + encodeURIComponent(valuationId),
+                {
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
+        } finally {
+            clearTimeout(timeout);
+        }
+
+        // Support both the Step 16 response shape and a direct valuation object.
+        const v = data.valuation || data;
+        if (!v || !v.valuation_id) {
+            throw new Error("Saved valuation details were not returned by the server.");
+        }
+
+        const range = v.fair_buying_range || {
+            min: v.fair_buying_min,
+            max: v.fair_buying_max
+        };
+
+        content.innerHTML = `
+            <div class="status success">
+                Saved valuation loaded successfully.
+            </div>
+
+            <div class="modal-grid">
+                <div class="modal-field"><strong>VALUATION ID</strong>${v.valuation_id || "â€”"}</div>
+                <div class="modal-field"><strong>DATE & TIME</strong>${v.created_at || "â€”"}</div>
+                <div class="modal-field"><strong>BRAND</strong>${v.brand || "â€”"}</div>
+                <div class="modal-field"><strong>MODEL</strong>${v.model || "â€”"}</div>
+                <div class="modal-field"><strong>VARIANT</strong>${v.variant || "â€”"}</div>
+                <div class="modal-field"><strong>FUEL TYPE</strong>${v.fuel_type || "â€”"}</div>
+                <div class="modal-field"><strong>TRANSMISSION</strong>${v.transmission || "â€”"}</div>
+                <div class="modal-field"><strong>MANUFACTURE YEAR</strong>${v.manufacture_year || "â€”"}</div>
+                <div class="modal-field"><strong>CURRENT KM</strong>${num(v.current_km)} KM</div>
+                <div class="modal-field"><strong>OWNER COUNT</strong>${v.owner_count || "â€”"}</div>
+                <div class="modal-field"><strong>REGISTRATION LOCATION</strong>${v.registration_location || "â€”"}</div>
+                <div class="modal-field"><strong>DATA STATUS</strong>${v.data_status || "â€”"}</div>
+            </div>
+
+            <div class="valuation-grid" style="margin-top:20px;">
+                <div class="price-card">
+                    <h3>AI PREDICTED VALUE</h3>
+                    <div class="price">${money(v.ai_predicted_value)}</div>
+                </div>
+                <div class="price-card">
+                    <h3>FAIR BUYING MIN</h3>
+                    <div class="price">${money(range.min)}</div>
+                </div>
+                <div class="price-card">
+                    <h3>FAIR BUYING MAX</h3>
+                    <div class="price">${money(range.max)}</div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error("CarSure valuation details error:", error);
+        const message = error && error.name === "AbortError"
+            ? "The server did not respond within 10 seconds."
+            : (error.message || "Unknown error");
+
+        content.innerHTML = `
+            <div class="error">
+                <strong>Could not load saved valuation.</strong><br>
+                ${message}
+                <br><br>
+                <small>
+                    Check that Flask is running with the latest app.py,
+                    then refresh the page and try again.
+                </small>
+            </div>
+        `;
+    }
+}
+
+function closeValuationModal(event) {
+    if (event && event.target && event.target.id !== "valuationModal") return;
+    document.getElementById("valuationModal").classList.add("hidden");
+}
+
+function clearValuation() {
+    [
+        "vBrand","vModel","vVariant","vYear",
+        "vKm","vOwners","vLocation"
+    ].forEach(id => document.getElementById(id).value = "");
+
+    document.getElementById("vFuel").value = "";
+    document.getElementById("vTransmission").value = "";
+
+    document.getElementById("valuationResult").classList.add("hidden");
+    document.getElementById("saveValuationBtn").disabled = true;
+    document.getElementById("valuationStatus").classList.add("hidden");
+
+    currentEstimate = null;
+}
+
+async function loadValuationHistory() {
+    const container = document.getElementById("valuationHistory");
+
+    try {
+        const data = await getJson("/api/valuation-history");
+
+        if (!data.valuations || data.valuations.length === 0) {
+            container.innerHTML = "<p>No saved valuations yet.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Valuation ID</th>
+                        <th>Date & Time</th>
+                        <th>Vehicle</th>
+                        <th>Year</th>
+                        <th>KM</th>
+                        <th>AI Value</th>
+                        <th>Fair Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.valuations.map(v => `
+                        <tr>
+                            <td><button class="history-link" onclick="openValuationDetails('${v.valuation_id}')">${v.valuation_id}</button></td>
+                            <td>${v.created_at}</td>
+                            <td>${v.brand} ${v.model} ${v.variant}</td>
+                            <td>${v.manufacture_year}</td>
+                            <td>${num(v.current_km)} KM</td>
+                            <td>${money(v.ai_predicted_value)}</td>
+                            <td>
+                                ${money(v.fair_buying_range.min)}
+                                -
+                                ${money(v.fair_buying_range.max)}
+                            </td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+            </div>
+        `;
+
+    } catch (error) {
+        container.innerHTML = `<div class="error">${error.message}</div>`;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadVehicles();
+    loadValuationHistory();
+});
+</script>
+
+</body>
+</html>

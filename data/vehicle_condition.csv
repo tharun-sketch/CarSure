@@ -1,0 +1,6 @@
+condition_id,vehicle_id,engine_condition,gearbox_condition,brake_condition,tyre_condition,battery_condition,suspension_condition,exterior_condition,interior_condition,flood_damage,fire_damage,modifications,inspection_source,inspection_date
+1,CAR001,Good,Good,Good,Good,Good,Good,Minor scratches,Good,No,No,None,Inspection record,2026-08-20
+2,CAR002,Good,Good,Fair,Fair,Good,Good,Minor scratches,Good,No,No,None,Inspection record,2026-08-22
+3,CAR003,Excellent,Excellent,Good,Good,Good,Good,Very Good,Very Good,No,No,None,Inspection record,2026-08-24
+4,CAR004,Excellent,Excellent,Excellent,Good,Good,Good,Good,Good,No,No,Aftermarket accessories,Inspection record,2026-08-25
+5,CAR005,Good,Good,Good,Fair,Good,Good,Good,Good,No,No,None,Inspection record,2026-08-26

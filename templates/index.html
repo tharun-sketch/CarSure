@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarSure - Used Car Valuation & Vehicle History Platform</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#222}
+.header{background:#111827;color:#fff;padding:22px 40px}
+.header h1{margin:0;font-size:28px}.header p{margin:5px 0 0;color:#cbd5e1}
+.container{max-width:1200px;margin:30px auto;padding:0 20px}
+.section,.vehicle-card,.price-card{background:#fff;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.section{padding:25px;margin-bottom:20px}.section h2{margin-top:0}
+.vehicle-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.vehicle-option{border:1px solid #e2e8f0;border-radius:10px;padding:15px;background:#f8fafc}
+.vehicle-option strong{display:block;margin-bottom:6px}
+.vehicle-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{border:0;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:600}
+.btn-dark{background:#111827;color:#fff}.btn-blue{background:#2563eb;color:#fff}
+.btn-green{background:#15803d;color:#fff}.btn-light{background:#e2e8f0;color:#111827}
+.btn-red{background:#dc2626;color:#fff}.btn-fav{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+button:disabled{opacity:.55;cursor:not-allowed}
+.vehicle-card{padding:25px;margin-bottom:20px}.vehicle-title{font-size:26px;font-weight:bold}
+.vehicle-info{margin-top:8px;color:#64748b}
+.valuation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}
+.price-card{padding:22px}.price-card h3{margin:0 0 8px;color:#64748b;font-size:14px}.price{font-size:25px;font-weight:bold}
+.details-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.detail{background:#f8fafc;padding:15px;border-radius:8px}.detail strong{display:block;color:#64748b;font-size:13px;margin-bottom:5px}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.form-group label{display:block;font-weight:600;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}
+.filter-grid label{font-size:13px;font-weight:700;color:#475569;display:block;margin-bottom:5px}
+.filter-grid input,.filter-grid select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}
+.status{margin-top:15px;padding:12px;border-radius:8px;background:#f1f5f9}
+.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}
+.history-item{border-left:4px solid #334155;padding:12px 15px;margin-bottom:12px;background:#f8fafc;border-radius:4px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap}th{background:#f8fafc}
+.hidden{display:none!important}.muted{color:#64748b}.loading{text-align:center;padding:30px}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.modal-card{background:#fff;width:min(1000px,100%);max-height:90vh;overflow:auto;border-radius:14px;padding:25px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;gap:15px}.modal-header h2{margin:0}
+.modal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.modal-field{background:#f8fafc;padding:13px;border-radius:8px}.modal-field strong{display:block;color:#64748b;font-size:12px;margin-bottom:4px}
+.history-link{color:#2563eb;background:none;padding:0;text-decoration:underline;font-weight:700}
+.favorite-section{border:2px solid #fed7aa;background:#fffaf5}
+.favorite-badge{display:inline-block;background:#fff7ed;color:#9a3412;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700;margin-left:6px}
+.comparison-group td{background:#e2e8f0;color:#334155;font-weight:800;text-transform:uppercase;letter-spacing:.7px;font-size:12px}
+.comparison-table td,.comparison-table th{min-width:150px}
+@media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,1fr)}.valuation-grid,.details-grid,.form-grid,.vehicle-list{grid-template-columns:1fr}}
+@media(max-width:650px){.filter-grid,.modal-grid{grid-template-columns:1fr}.header{padding:20px}}
+
+/* CarSure Professional Vehicle Cards */
+.vehicle-option.pro-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,.07);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.vehicle-option.pro-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,.12);
+}
+.pro-card .vehicle-visual {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#eef4ff,#f8fafc);
+  border-bottom: 1px solid #e5e7eb;
+}
+.pro-card .vehicle-icon { font-size: 52px; line-height: 1; }
+.pro-card .vehicle-photo-label {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.pro-card .vehicle-card-body { padding: 16px; }
+.pro-card .vehicle-card-title {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.pro-card .vehicle-card-title h3 { margin:0; font-size:18px; }
+.pro-card .vehicle-price {
+  font-size:22px;
+  font-weight:800;
+  margin:8px 0 14px;
+}
+.pro-card .vehicle-specs {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:14px;
+}
+.pro-card .vehicle-spec {
+  padding:9px 10px;
+  border-radius:10px;
+  background:#f8fafc;
+  font-size:12px;
+}
+.pro-card .vehicle-spec strong { display:block; font-size:13px; margin-top:2px; }
+.pro-card .vehicle-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+.pro-card .vehicle-actions button { flex:1 1 auto; }
+
+
+/* Step 25 vehicle detail modal */
+.detail25{position:fixed;inset:0;background:rgba(15,23,42,.68);z-index:9999;overflow:auto;padding:25px 15px}.detail25.hidden{display:none!important}.detail25-card{max-width:1100px;margin:auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.3)}.detail25-head{background:#111827;color:white;padding:22px 25px;display:flex;justify-content:space-between;align-items:center}.detail25-head h2{margin:0 0 5px}.detail25-head p{margin:0;color:#cbd5e1}.detail25-close{background:rgba(255,255,255,.15);color:white;font-size:24px;padding:7px 13px}.detail25-body{padding:24px}.d25-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.d25-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px}.d25-box small{display:block;color:#64748b;font-weight:700;margin-bottom:5px}.d25-box strong{font-size:18px}.d25-section{margin-top:24px}.d25-section h3{margin-bottom:12px}.d25-prices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.d25-price{border:1px solid #e2e8f0;border-radius:12px;padding:16px}.d25-price small{color:#64748b}.d25-price strong{display:block;font-size:20px;margin-top:6px}.d25-table{width:100%;border-collapse:collapse}.d25-table th,.d25-table td{padding:9px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:13px}.d25-table th{background:#f8fafc}.d25-tags{display:flex;flex-wrap:wrap;gap:8px}.d25-tag{background:#f1f5f9;border-radius:999px;padding:8px 11px;font-size:13px}@media(max-width:800px){.d25-grid,.d25-prices{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.d25-grid,.d25-prices{grid-template-columns:1fr}}
+
+/* Step 27 - Professional Printable CarSure Report */
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.report-actions button{font-size:14px}
+.carsure-report-print{display:none}
+@media print{
+  body *{visibility:hidden!important}
+  #printReport,#printReport *{visibility:visible!important}
+  #printReport{display:block!important;position:absolute;left:0;top:0;width:100%;background:#fff}
+  .no-print{display:none!important}
+  @page{size:A4;margin:12mm}
+}
+.report-page{font-family:Arial,sans-serif;color:#172033;background:#fff;padding:28px;max-width:900px;margin:auto}
+.report-cover{background:linear-gradient(135deg,#111827,#1d4ed8);color:#fff;border-radius:18px;padding:28px;margin-bottom:20px}
+.report-brand{font-size:28px;font-weight:800}.report-sub{opacity:.85;margin-top:5px}
+.report-title{font-size:24px;font-weight:800;margin:25px 0 5px}.report-meta{color:#64748b}
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.report-box{border:1px solid #e2e8f0;border-radius:12px;padding:14px;background:#f8fafc}
+.report-box small{display:block;color:#64748b;font-weight:700;margin-bottom:5px}
+.report-box strong{font-size:18px}
+.report-section{margin:24px 0}.report-section h3{border-bottom:2px solid #e2e8f0;padding-bottom:8px}
+.report-table{width:100%;border-collapse:collapse}.report-table th,.report-table td{padding:9px;border:1px solid #e2e8f0;text-align:left;font-size:12px}
+.report-table th{background:#f8fafc}
+.report-footer{margin-top:30px;padding-top:15px;border-top:1px solid #e2e8f0;color:#64748b;font-size:11px}
+
+
+/* Step 31 - Photo & Document Upload */
+.upload31-section{margin:28px 0;padding:24px;border:1px solid #dbe3ea;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.upload31-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.upload31-head h2{margin:0 0 6px}.upload31-note{color:#64748b;font-size:14px;margin:0}
+.upload31-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+.upload31-card{border:1px solid #e2e8f0;border-radius:14px;padding:16px;background:#f8fafc}
+.upload31-card h3{margin:0 0 6px;font-size:16px}.upload31-card p{margin:0 0 12px;color:#64748b;font-size:13px}
+.upload31-card input{width:100%;box-sizing:border-box;padding:10px;border:1px dashed #94a3b8;border-radius:10px;background:#fff}
+.upload31-status{margin-top:10px;font-size:13px;color:#475569}.upload31-status.ok{color:#166534;font-weight:600}
+.upload31-preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.upload31-preview img{width:92px;height:72px;object-fit:cover;border-radius:9px;border:1px solid #cbd5e1}
+.upload31-files{margin-top:12px;display:grid;gap:7px}.upload31-file{padding:9px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:9px;font-size:13px}
+.upload31-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.upload31-btn{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:600}.upload31-btn.primary{background:#0f172a;color:#fff}.upload31-btn.secondary{background:#e2e8f0;color:#0f172a}
+.upload31-summary{margin-top:18px;padding:14px;border-radius:12px;background:#f1f5f9;color:#334155;font-size:14px}
+@media(max-width:760px){.upload31-grid{grid-template-columns:1fr}}
+
+/* Step 32 - Trust & Verification */
+.trust32-section{margin:28px 0;padding:24px;border:1px solid #dbe3ea;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.trust32-head{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.trust32-head h2{margin:0}.trust32-note{color:#64748b;font-size:13px;margin:5px 0 0}
+.trust32-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.trust32-item{border:1px solid #e2e8f0;border-radius:13px;padding:14px;background:#f8fafc}.trust32-item strong{display:block;font-size:14px}.trust32-status{margin-top:7px;font-weight:700}.trust32-status.ok{color:#166534}.trust32-status.partial{color:#92400e}.trust32-status.none{color:#64748b}
+.trust32-score{padding:14px 16px;border-radius:13px;background:#eef2ff;margin-top:16px;font-weight:700}.trust32-score span{font-size:22px}
+@media(max-width:800px){.trust32-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.trust32-grid{grid-template-columns:1fr}}
+
+.account-summary33{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid #e5e7eb;border-radius:14px;background:#f8fafc;margin-bottom:16px}
+.account-avatar33{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;background:#e2e8f0}
+.stats-grid33{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}
+.stat-card33{padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+.stat-card33 span{display:block;color:#64748b;font-size:13px;margin-bottom:7px}
+.stat-card33 strong{font-size:24px}
+@media(max-width:800px){.stats-grid33{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Step 34 - Mobile Responsive Design */
+@media (max-width: 900px) {
+  .container, main, .page, .content { width:100% !important; max-width:100% !important; }
+  .form-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .stats-grid33 { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  table { display:block; width:100%; overflow-x:auto; white-space:nowrap; }
+}
+
+@media (max-width: 600px) {
+  body { font-size:14px !important; overflow-x:hidden !important; }
+  h1 { font-size:25px !important; line-height:1.2 !important; }
+  h2 { font-size:20px !important; }
+  h3 { font-size:17px !important; }
+
+  .container, main, .page, .content {
+    width:100% !important;
+    max-width:100% !important;
+    padding-left:12px !important;
+    padding-right:12px !important;
+    box-sizing:border-box !important;
+  }
+
+  .card, section.card, .panel {
+    padding:14px !important;
+    margin-bottom:14px !important;
+    border-radius:12px !important;
+  }
+
+  .form-grid {
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+
+  .stats-grid33 {
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+  }
+
+  .stat-card33 { padding:12px !important; }
+  .stat-card33 strong { font-size:20px !important; }
+
+  input, select, textarea, button {
+    width:100% !important;
+    min-height:44px !important;
+    box-sizing:border-box !important;
+    font-size:15px !important;
+  }
+
+  .action-row {
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+  }
+
+  .action-row button { width:100% !important; }
+
+  .account-summary33 {
+    align-items:flex-start !important;
+    padding:12px !important;
+  }
+
+  .account-avatar33 {
+    flex:0 0 44px !important;
+    width:44px !important;
+    height:44px !important;
+  }
+
+  .vehicle-card, .car-card, .vehicle-item {
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .vehicle-card button, .car-card button, .vehicle-item button {
+    width:100% !important;
+    margin-top:5px !important;
+  }
+
+  table {
+    display:block !important;
+    width:100% !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  th, td {
+    padding:8px !important;
+    font-size:12px !important;
+  }
+
+  .modal, .modal-content, .detail-modal {
+    width:calc(100% - 20px) !important;
+    max-width:calc(100% - 20px) !important;
+    margin:10px auto !important;
+    box-sizing:border-box !important;
+  }
+
+  #printReport {
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .report-table {
+    overflow-x:auto !important;
+  }
+}
+
+</style>
+
+<style id="step24-professional-cards">
+.vehicle-option{
+  padding:0!important;
+  overflow:hidden;
+  border:1px solid #dbe3ee!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:0 8px 22px rgba(15,23,42,.07);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.vehicle-option:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,23,42,.12)}
+.car-visual{
+  height:150px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#eef4fb,#f8fafc);
+  border-bottom:1px solid #e5eaf1;
+  font-size:72px;
+}
+.car-card-body{padding:18px}
+.car-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.car-card-title{font-size:18px!important;font-weight:800!important;margin:0 0 5px!important}
+.car-card-price{font-size:22px;font-weight:850;margin:6px 0 14px}
+.car-specs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0 15px}
+.car-spec{background:#f8fafc;border:1px solid #e8edf4;border-radius:9px;padding:9px}
+.car-spec small{display:block;color:#64748b;font-size:10px;text-transform:uppercase;font-weight:700}
+.car-spec b{display:block;margin-top:3px;font-size:13px}
+.car-actions{display:flex;flex-wrap:wrap;gap:7px}
+.car-actions button{flex:1;min-width:100px}
+@media(max-width:650px){.car-specs{grid-template-columns:1fr 1fr}}
+</style>
+
+
+<style id="Step27ReportStyles">
+@media print{
+  body *{visibility:hidden!important}
+  #printReport,#printReport *{visibility:visible!important}
+  #printReport{display:block!important;position:absolute;left:0;top:0;width:100%;background:#fff}
+  @page{size:A4;margin:12mm}
+}
+.report-page{font-family:Arial,sans-serif;color:#172033;background:#fff;padding:25px;max-width:900px;margin:auto}
+.report-cover{background:#111827;color:#fff;padding:28px;border-radius:16px;margin-bottom:20px}
+.report-brand{font-size:30px;font-weight:800}.report-sub{opacity:.85;margin-top:5px}
+.report-title{font-size:24px;font-weight:800;margin-top:24px}
+.report-section{margin:22px 0}.report-section h3{border-bottom:2px solid #e2e8f0;padding-bottom:8px}
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.report-box{border:1px solid #e2e8f0;border-radius:10px;padding:13px;background:#f8fafc}
+.report-box small{display:block;color:#64748b;font-weight:700;margin-bottom:5px}.report-box strong{font-size:18px}
+.report-table{width:100%;border-collapse:collapse}.report-table th,.report-table td{padding:8px;border:1px solid #e2e8f0;text-align:left;font-size:12px}
+.report-table th{background:#f8fafc}.report-footer{border-top:1px solid #e2e8f0;padding-top:12px;color:#64748b;font-size:10px}
+@media(max-width:700px){.report-grid{grid-template-columns:1fr}}
+</style>
+
+
+<style id="carsure-pdf-blank-page-fix">
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+
+  /* Print only the generated report. Remove the normal app layout
+     from the print layout so it cannot create blank pages. */
+  body > *:not(#printReport) {
+    display: none !important;
+  }
+
+  #printReport {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  #printReport .report-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  #printReport .report-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #printReport .report-cover {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #printReport .report-table,
+  #printReport .report-box {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
+</style>
+
+
+<style id="step29-price-dashboard">
+.price-dashboard{
+  margin-top:20px;
+  padding:20px;
+  border:1px solid #dbe3ee;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f8fbff,#ffffff);
+}
+.price-dashboard h3{margin:0 0 5px}
+.dashboard-subtitle{color:#64748b;margin:0 0 16px;font-size:13px}
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+.dashboard-card{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:15px;
+}
+.dashboard-card small{
+  display:block;
+  color:#64748b;
+  font-weight:700;
+  margin-bottom:5px;
+}
+.dashboard-card strong{font-size:20px}
+.dashboard-table{margin-top:18px}
+.dashboard-note{margin-top:12px;color:#64748b;font-size:12px}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.dashboard-grid{grid-template-columns:1fr}}
+</style>
+
+
+<style id="step30-finance-styles">
+.finance-box{margin-top:20px;border:1px solid #dbe3ee;border-radius:16px;padding:20px;background:linear-gradient(135deg,#f8fbff,#fff)}
+.finance-box h3{margin:0 0 5px}.finance-sub{color:#64748b;font-size:13px;margin:0 0 16px}
+.finance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}
+.finance-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px}
+.finance-card small{display:block;color:#64748b;font-weight:700;margin-bottom:5px}.finance-card strong{font-size:19px}
+.finance-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.finance-form label{display:block;font-size:13px;font-weight:700;color:#475569;margin-bottom:5px}
+.finance-form input,.finance-form select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
+.finance-note{font-size:12px;color:#64748b;margin-top:12px}
+@media(max-width:900px){.finance-grid,.finance-form{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.finance-grid,.finance-form{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="header">
+  <h1>CarSure</h1>
+  <p>Used Car Valuation & Vehicle History Platform</p>
+</div>
+
+<div class="container">
+
+<!-- SEARCH, FILTERS & COMPARISON -->
+<div class="section">
+  
+<section class="card" id="accountSection33">
+<h2>👤 CarSure Account</h2>
+<p>Create a prototype account to keep your CarSure activity in this browser.</p>
+<div id="accountLoggedOut33">
+<div class="form-grid">
+<div><label>Full Name</label><input id="accountName33" type="text" placeholder="Enter your name"></div>
+<div><label>Email</label><input id="accountEmail33" type="email" placeholder="you@example.com"></div>
+<div><label>Password</label><input id="accountPassword33" type="password" placeholder="Minimum 4 characters"></div>
+</div>
+<div class="action-row">
+<button type="button" onclick="registerAccount33()">Create Account</button>
+<button type="button" class="secondary" onclick="loginAccount33()">Login</button>
+</div>
+<p class="muted">Prototype only: account data is stored locally in this browser. Do not use a real password.</p>
+<div id="accountMessage33" class="status-box hidden"></div>
+</div>
+<div id="accountLoggedIn33" class="hidden">
+<div class="account-summary33"><div class="account-avatar33" id="accountAvatar33">U</div><div><div class="muted">Logged in as</div><h3 id="accountDisplayName33">User</h3><div id="accountDisplayEmail33" class="muted"></div></div></div>
+<div class="stats-grid33">
+<div class="stat-card33"><span>⭐ Favorites</span><strong id="accountFavorites33">0</strong></div>
+<div class="stat-card33"><span>📊 Valuations</span><strong id="accountValuations33">0</strong></div>
+<div class="stat-card33"><span>📄 Reports</span><strong id="accountReports33">0</strong></div>
+<div class="stat-card33"><span>📷 Upload Records</span><strong id="accountUploads33">0</strong></div>
+</div>
+<div class="action-row"><button type="button" onclick="refreshAccountDashboard33()">Refresh Dashboard</button><button type="button" class="secondary" onclick="logoutAccount33()">Logout</button></div>
+</div>
+</section>
+
+<h2>Vehicle Search & Comparison</h2>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
+    <button class="btn-light" onclick="clearComparison()">Clear Selection</button>
+    <button class="btn-dark" onclick="compareSelected()">Compare Selected</button>
+    <span id="compareStatus" class="muted"></span>
+  </div>
+
+  <div class="section" style="background:#f8fafc;box-shadow:none;border:1px solid #e2e8f0;margin-bottom:15px;">
+    <h3 style="margin-top:0">Search & Filter Vehicles</h3>
+    <div class="filter-grid">
+      <div><label>Brand</label><select id="filterBrand"><option value="">All Brands</option></select></div>
+      <div><label>Model</label><select id="filterModel"><option value="">All Models</option></select></div>
+      <div><label>Fuel</label><select id="filterFuel"><option value="">All Fuel Types</option></select></div>
+      <div><label>Transmission</label><select id="filterTransmission"><option value="">All Transmissions</option></select></div>
+      <div><label>Minimum Year</label><input id="filterMinYear" type="number" placeholder="e.g. 2020"></div>
+      <div><label>Maximum Year</label><input id="filterMaxYear" type="number" placeholder="e.g. 2025"></div>
+      <div><label>Minimum KM</label><input id="filterMinKm" type="number" placeholder="e.g. 10000"></div>
+      <div><label>Maximum KM</label><input id="filterMaxKm" type="number" placeholder="e.g. 80000"></div>
+      <div><label>Minimum Price</label><input id="filterMinPrice" type="number" placeholder="e.g. 500000"></div>
+      <div><label>Maximum Price</label><input id="filterMaxPrice" type="number" placeholder="e.g. 1500000"></div>
+      <div><label>Maximum Owners</label><input id="filterMaxOwners" type="number" min="1" max="10" placeholder="e.g. 2"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;">
+      <button class="btn-blue" onclick="applyVehicleFilters()">Search Vehicles</button>
+      <button class="btn-light" onclick="clearFilters()">Clear Filters</button>
+      <select id="sortVehicles" onchange="sortAndRenderVehicles()" style="padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;">
+        <option value="">Sort Vehicles</option>
+        <option value="price_low">Price: Low to High</option>
+        <option value="price_high">Price: High to Low</option>
+        <option value="year_new">Year: Newest First</option>
+        <option value="year_old">Year: Oldest First</option>
+        <option value="km_low">KM: Low to High</option>
+        <option value="km_high">KM: High to Low</option>
+        <option value="ai_high">AI Value: High to Low</option>
+      </select>
+    </div>
+    <div id="vehicleCount" class="muted" style="margin-top:12px;">Loading vehicles...</div>
+     <div class="muted" style="margin-top:6px;font-size:12px;">Tip: combine filters and sorting to quickly find vehicles matching your budget and usage.</div>
+  </div>
+
+  <div id="vehicleList" class="vehicle-list"><div class="loading">Loading vehicles...</div></div>
+</div>
+
+<!-- SAVED VEHICLES -->
+<div class="section favorite-section">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+    <div>
+      <h2 style="margin-bottom:4px">⭐ Saved Vehicles</h2>
+      <p class="muted" style="margin-top:0">Your favorites are saved in this browser.</p>
+    </div>
+    <button class="btn-light" onclick="renderFavorites()">Refresh Saved</button>
+  </div>
+  <div id="favoriteList" class="vehicle-list"></div>
+</div>
+
+<!-- REPORT -->
+<div id="reportSection" class="hidden">
+  <div class="report-actions no-print">
+    <button class="btn-blue" onclick="generatePrintReport()">📄 Generate Valuation Report</button>
+    <button class="btn-dark" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+  <div class="vehicle-card">
+    <div class="vehicle-title" id="vehicleName"></div>
+    <div class="vehicle-info" id="vehicleInfo"></div>
+  </div>
+  <div class="valuation-grid">
+    <div class="price-card"><h3>AI Estimated Value</h3><div class="price" id="aiPrice">—</div></div>
+    <div class="price-card"><h3>Fair Buying Range</h3><div class="price" id="fairRange">—</div></div>
+    <div class="price-card"><h3>Dealer Asking Price</h3><div class="price" id="dealerPrice">—</div></div>
+    <div class="price-card"><h3>Market Listing Average</h3><div class="price" id="marketAverage">—</div></div>
+    <div class="price-card"><h3>Dealer Price Difference</h3><div class="price" id="dealerDifference">—</div></div>
+    <div class="price-card"><h3>Vehicle History Score</h3><div class="price" id="historyScore">—</div></div>
+  </div>
+
+  <div class="section"><h2>Valuation Analysis</h2><div class="details-grid">
+    <div class="detail"><strong>Vehicle Age</strong><span id="reportAge">—</span></div>
+    <div class="detail"><strong>Market Value Retention</strong><span id="marketRetention">—</span></div>
+    <div class="detail"><strong>Depreciation From Original On-road</strong><span id="onroadDepreciation">—</span></div>
+    <div class="detail"><strong>AI vs Market</strong><span id="aiVsMarket">—</span></div>
+    <div class="detail"><strong>AI vs Dealer Listing</strong><span id="aiVsDealer">—</span></div>
+    <div class="detail"><strong>Dealer vs Market Listing</strong><span id="dealerVsMarket">—</span></div>
+  </div></div>
+
+  <div class="section"><h2>Data Confidence & Evidence</h2><div class="details-grid">
+    <div class="detail"><strong>Confidence Status</strong><span id="confidenceStatus">—</span></div>
+    <div class="detail"><strong>Confidence Score</strong><span id="confidencePercentage">—</span></div>
+    <div class="detail"><strong>Evidence Coverage</strong><span id="evidenceCoverage">—</span></div>
+  </div><p class="muted" id="evidenceList"></p></div>
+
+  <div class="section"><h2>🛡️ Trust & Verification</h2><div class="details-grid">
+    <div class="detail"><strong>Vehicle Record</strong><span id="reportTrustVehicle32">—</span></div>
+    <div class="detail"><strong>Accident Evidence</strong><span id="reportTrustAccident32">—</span></div>
+    <div class="detail"><strong>Service Evidence</strong><span id="reportTrustService32">—</span></div>
+    <div class="detail"><strong>Insurance Evidence</strong><span id="reportTrustInsurance32">—</span></div>
+    <div class="detail"><strong>Condition Inspection</strong><span id="reportTrustCondition32">—</span></div>
+    <div class="detail"><strong>KM Verification</strong><span id="reportTrustKm32">—</span></div>
+    <div class="detail"><strong>Photo Evidence</strong><span id="reportTrustPhoto32">—</span></div>
+    <div class="detail"><strong>Document Evidence</strong><span id="reportTrustDocument32">—</span></div>
+    <div class="detail"><strong>Evidence Coverage</strong><span id="reportTrustCoverage32">—</span></div>
+  </div><p class="muted">These indicators summarize available evidence; they are not a guarantee or independent certification.</p></div>
+
+  <div class="section"><h2>Vehicle Summary</h2><div class="details-grid">
+    <div class="detail"><strong>Accident Records</strong><span id="accidentCount"></span></div>
+    <div class="detail"><strong>Service Records</strong><span id="serviceCount"></span></div>
+    <div class="detail"><strong>Insurance Claims</strong><span id="claimCount"></span></div>
+    <div class="detail"><strong>Owners</strong><span id="summaryOwners"></span></div>
+    <div class="detail"><strong>Current KM</strong><span id="summaryKm"></span></div>
+    <div class="detail"><strong>Data Confidence</strong><span id="dataConfidence"></span></div>
+  </div></div>
+
+  <div class="section"><h2>Vehicle Details</h2><div class="details-grid">
+    <div class="detail"><strong>Brand</strong><span id="brand"></span></div>
+    <div class="detail"><strong>Model</strong><span id="model"></span></div>
+    <div class="detail"><strong>Variant</strong><span id="variant"></span></div>
+    <div class="detail"><strong>Fuel</strong><span id="fuel"></span></div>
+    <div class="detail"><strong>Transmission</strong><span id="transmission"></span></div>
+    <div class="detail"><strong>Manufacturing Year</strong><span id="year"></span></div>
+    <div class="detail"><strong>Current KM</strong><span id="km"></span></div>
+    <div class="detail"><strong>Owners</strong><span id="owners"></span></div>
+    <div class="detail"><strong>Registration Location</strong><span id="location"></span></div>
+  </div></div>
+
+  <div class="section"><h2>Accident History</h2><div id="accidents"></div></div>
+  <div class="section"><h2>Service History</h2><div id="services"></div></div>
+  <div class="section"><h2>Insurance</h2><div id="insurance"></div></div>
+  <div class="section"><h2>Condition</h2><div id="condition"></div></div>
+  <div class="section"><h2>KM Verification</h2><div id="kmVerification"></div></div>
+</div>
+
+
+<!-- STEP 30 - FINANCE ELIGIBILITY ESTIMATE -->
+<div class="section">
+  <div class="finance-box">
+    <h3>🏦 Used Car Finance Estimate</h3>
+    <p class="finance-sub">Get an indicative estimate of how much finance a used car may support. This is information only, not loan approval.</p>
+
+    <div class="finance-form">
+      <div>
+        <label>Vehicle Market Value (₹)</label>
+        <input id="financePrice" type="number" min="0" placeholder="e.g. 520000">
+      </div>
+      <div>
+        <label>Finance Percentage</label>
+        <select id="financePercent">
+          <option value="70">70%</option>
+          <option value="75" selected>75%</option>
+          <option value="80">80%</option>
+        </select>
+      </div>
+      <div>
+        <label>Tenure (Years)</label>
+        <select id="financeTenure">
+          <option value="3">3 Years</option>
+          <option value="4">4 Years</option>
+          <option value="5" selected>5 Years</option>
+          <option value="6">6 Years</option>
+          <option value="7">7 Years</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+      <button class="btn-blue" onclick="calculateFinance()">Calculate Finance Estimate</button>
+      <button class="btn-light" onclick="clearFinance()">Clear</button>
+    </div>
+
+    <div id="financeResult" class="hidden">
+      <div class="finance-grid">
+        <div class="finance-card"><small>Vehicle Value</small><strong id="financeVehicleValue">—</strong></div>
+        <div class="finance-card"><small>Indicative Finance</small><strong id="financeAmount">—</strong></div>
+        <div class="finance-card"><small>Indicative Down Payment</small><strong id="financeDownPayment">—</strong></div>
+        <div class="finance-card"><small>Selected Tenure</small><strong id="financeTenureResult">—</strong></div>
+      </div>
+      <p class="finance-note" id="financeNote"></p>
+    </div>
+  </div>
+</div>
+
+<!-- AI VALUATION -->
+<div class="section">
+<h2>
+<section class="upload31-section" id="upload31Section">
+  <div class="upload31-head">
+    <div>
+      <h2>📷 Vehicle Photos & Document Upload</h2>
+      <p class="upload31-note">Add evidence for a selected vehicle. This Step 31 prototype stores upload metadata in this browser and previews images locally.</p>
+    </div>
+  </div>
+  <div class="upload31-grid">
+    <div class="upload31-card">
+      <h3>🚗 Vehicle Photos</h3>
+      <p>Upload exterior/interior photos for inspection evidence.</p>
+      <input id="vehiclePhotos31" type="file" accept="image/*" multiple onchange="handlePhotoUpload31(event)">
+      <div id="photoStatus31" class="upload31-status">No photos selected.</div>
+      <div id="photoPreview31" class="upload31-preview"></div>
+    </div>
+    <div class="upload31-card">
+      <h3>📄 RC / Registration Document</h3>
+      <p>Upload the registration certificate or supporting document.</p>
+      <input id="rcDocument31" type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleDocumentUpload31(event,'rc')">
+      <div id="rcStatus31" class="upload31-status">Not uploaded.</div>
+    </div>
+    <div class="upload31-card">
+      <h3>🛡️ Insurance Document</h3>
+      <p>Upload current or previous insurance evidence.</p>
+      <input id="insuranceDocument31" type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleDocumentUpload31(event,'insurance')">
+      <div id="insuranceStatus31" class="upload31-status">Not uploaded.</div>
+    </div>
+    <div class="upload31-card">
+      <h3>🔧 Service / Accident Evidence</h3>
+      <p>Upload service invoices, accident photos or repair evidence.</p>
+      <input id="evidenceDocuments31" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="handleDocumentUpload31(event,'evidence')">
+      <div id="evidenceStatus31" class="upload31-status">Not uploaded.</div>
+      <div id="evidenceFiles31" class="upload31-files"></div>
+    </div>
+  </div>
+  <div class="upload31-actions">
+    <button type="button" class="upload31-btn primary" onclick="saveUploads31()">💾 Save Upload Record</button>
+    <button type="button" class="upload31-btn secondary" onclick="clearUploads31()">Clear Uploads</button>
+  </div>
+  <div id="uploadSummary31" class="upload31-summary">Select a vehicle from the cards and add evidence. Uploads are currently a browser-side prototype; they are not sent to the Flask server yet.</div>
+</section>
+
+<section class="trust32-section" id="trust32Section">
+  <div class="trust32-head">
+    <div><h2>🛡️ Trust & Verification</h2><p class="trust32-note">Verification indicators are based only on evidence currently stored in CarSure. They do not guarantee the vehicle's condition or history.</p></div>
+    <button type="button" class="btn-blue" onclick="refreshTrust32()">Refresh Verification</button>
+  </div>
+  <div class="trust32-grid">
+    <div class="trust32-item"><strong>Vehicle Record</strong><div id="trustVehicle32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Accident Evidence</strong><div id="trustAccident32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Service Evidence</strong><div id="trustService32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Insurance Evidence</strong><div id="trustInsurance32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Condition Inspection</strong><div id="trustCondition32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>KM Verification</strong><div id="trustKm32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Photo Evidence</strong><div id="trustPhoto32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Document Evidence</strong><div id="trustDocument32" class="trust32-status">Select a vehicle</div></div>
+    <div class="trust32-item"><strong>Evidence Coverage</strong><div id="trustCoverage32" class="trust32-status">Select a vehicle</div></div>
+  </div>
+  <div class="trust32-score">CarSure Evidence Coverage: <span id="trustScore32">—</span></div>
+</section>
+
+
+AI Vehicle Valuation</h2>
+<p class="muted">Enter a vehicle's basic details to generate an AI-based development estimate.</p>
+<div class="form-grid">
+  <div class="form-group"><label>Brand</label><input id="vBrand" placeholder="e.g. Maruti Suzuki"></div>
+  <div class="form-group"><label>Model</label><input id="vModel" placeholder="e.g. Swift"></div>
+  <div class="form-group"><label>Variant</label><input id="vVariant" placeholder="e.g. VXi"></div>
+  <div class="form-group"><label>Fuel Type</label><select id="vFuel"><option value="">Select fuel</option><option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option></select></div>
+  <div class="form-group"><label>Transmission</label><select id="vTransmission"><option value="">Select transmission</option><option>Manual</option><option>Automatic</option><option>AMT</option><option>CVT</option><option>DCT</option></select></div>
+  <div class="form-group"><label>Manufacture Year</label><input id="vYear" type="number" min="1990" max="2026" placeholder="2021"></div>
+  <div class="form-group"><label>Current KM</label><input id="vKm" type="number" min="0" placeholder="40000"></div>
+  <div class="form-group"><label>Owner Count</label><input id="vOwners" type="number" min="1" max="10" placeholder="1"></div>
+  <div class="form-group"><label>Registration Location</label><input id="vLocation" placeholder="Hyderabad"></div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+  <button class="btn-blue" onclick="estimateVehicle()">Estimate Vehicle Value</button>
+  <button class="btn-green" id="saveValuationBtn" onclick="saveValuation()" disabled>Save Valuation</button>
+  <button class="btn-light" onclick="clearValuation()">Clear</button>
+</div>
+<div id="valuationStatus" class="status hidden"></div>
+<div id="valuationResult" class="hidden" style="margin-top:20px">
+  <div class="valuation-grid">
+    <div class="price-card"><h3>AI Estimated Value</h3><div class="price" id="estimateValue"></div></div>
+    <div class="price-card"><h3>Fair Buying Range</h3><div class="price" id="estimateRange"></div></div>
+    <div class="price-card"><h3>Vehicle Age</h3><div class="price" id="estimateAge"></div></div>
+    <div class="price-card"><h3>Current KM</h3><div class="price" id="estimateKm"></div></div>
+  </div>
+  <p class="muted" id="estimateNote"></p>
+</div>
+</div>
+
+<!-- VALUATION HISTORY -->
+<div class="section">
+<h2>Valuation History</h2>
+<button class="btn-dark" onclick="loadValuationHistory()">Refresh History</button>
+<div id="valuationHistory" style="margin-top:18px"><div class="loading">Loading valuation history...</div></div>
+</div>
+
+<!-- COMPARISON RESULT -->
+<div id="comparisonSection" class="section hidden">
+<h2>Vehicle Comparison</h2>
+<div id="comparisonContent"></div>
+  <div id="priceDashboard" class="price-dashboard hidden">
+    <h3>💰 Price Comparison Dashboard</h3>
+    <p class="dashboard-subtitle">A quick financial view of the vehicles you selected.</p>
+    <div class="dashboard-grid">
+      <div class="dashboard-card"><small>Lowest Market Price</small><strong id="dashLowestPrice">—</strong></div>
+      <div class="dashboard-card"><small>Highest Market Price</small><strong id="dashHighestPrice">—</strong></div>
+      <div class="dashboard-card"><small>Average Market Price</small><strong id="dashAveragePrice">—</strong></div>
+      <div class="dashboard-card"><small>Average AI Value</small><strong id="dashAverageAI">—</strong></div>
+    </div>
+    <div class="dashboard-table" id="dashTable"></div>
+    <div class="dashboard-note">Market values come from CarSure vehicle records. AI values are development/sample model estimates.</div>
+  </div>
+</div>
+
+</div>
+
+
+<div id="printReport" class="carsure-report-print"></div>
+
+<!-- MODAL -->
+<div id="valuationModal" class="modal-overlay hidden" onclick="closeValuationModal(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2 id="modalTitle">Saved Valuation Details</h2><button class="btn-light" onclick="closeValuationModal()">Close</button></div>
+    <div id="valuationModalContent" style="margin-top:15px"></div>
+  </div>
+</div>
+
+
+<div id="detail25Modal" class="detail25 hidden" onclick="if(event.target===this)closeVehicleDetail()"><div class="detail25-card"><div class="detail25-head"><div><h2 id="d25Title">Vehicle Details</h2><p id="d25Sub">CarSure Report</p></div><button class="detail25-close" onclick="closeVehicleDetail()">×</button></div><div id="d25Body" class="detail25-body">Loading...</div></div></div>
+<script>
+let allVehicles = [];
+let filteredVehicles = [];
+let selectedVehicles = new Set();
+let currentEstimate = null;
+let favorites = JSON.parse(localStorage.getItem("carsureFavorites") || "[]");
+
+function money(value){
+  if(value===null||value===undefined||value==="") return "—";
+  return "₹"+Number(value).toLocaleString("en-IN",{maximumFractionDigits:0});
+}
+function num(value){
+  if(value===null||value===undefined||value==="") return "—";
+  return Number(value).toLocaleString("en-IN");
+}
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+}
+async function getJson(url,options={}){
+  const response=await fetch(url,options);
+  const text=await response.text();
+  let data;
+  try{data=JSON.parse(text)}catch(e){throw new Error("Server returned HTML instead of JSON for "+url+". Check the Flask route.")}
+  if(!response.ok||data.success===false) throw new Error(data.error||"Request failed.");
+  return data;
+}
+function marketValue(v){
+  return Number(v.current_market_value ?? v.market_value ?? v.currentMarketValue ?? v.dealer_asking_price ?? v.dealer_price ?? 0);
+}
+function isFavorite(id){return favorites.includes(id)}
+function saveFavorites(){localStorage.setItem("carsureFavorites",JSON.stringify(favorites))}
+function toggleFavorite(id){
+  if(isFavorite(id)) favorites=favorites.filter(x=>x!==id);
+  else favorites.push(id);
+  saveFavorites();
+  renderVehicleList(filteredVehicles);
+  renderFavorites();
+}
+function vehicleCard(v) {
+  const saved = isFavorite(v.vehicle_id);
+  const price = getVehiclePrice(v);
+  const title = `${v.vehicle_id} — ${v.brand} ${v.model} ${v.variant || ""}`.trim();
+
+  return `
+    <div class="vehicle-option pro-card">
+      <div class="vehicle-visual">
+        <div class="vehicle-icon">🚗</div>
+        <div class="vehicle-photo-label">CarSure Vehicle</div>
+      </div>
+
+      <div class="vehicle-card-body">
+        <div class="vehicle-card-title">
+          <h3>${title}</h3>
+          ${saved ? '<span class="saved-badge">⭐ Saved</span>' : ''}
+        </div>
+
+        <div class="vehicle-price">₹${Number(price || 0).toLocaleString("en-IN")}</div>
+
+        <div class="vehicle-specs">
+          <div class="vehicle-spec">Year<strong>${v.manufacture_year || "—"}</strong></div>
+          <div class="vehicle-spec">KM Driven<strong>${Number(v.current_km || 0).toLocaleString("en-IN")} km</strong></div>
+          <div class="vehicle-spec">Fuel<strong>${v.fuel_type || "—"}</strong></div>
+          <div class="vehicle-spec">Transmission<strong>${v.transmission || "—"}</strong></div>
+          <div class="vehicle-spec">Owners<strong>${v.owner_count || "—"}</strong></div>
+          <div class="vehicle-spec">Location<strong>${v.registration_location || "—"}</strong></div>
+        </div>
+
+        <div class="vehicle-actions">
+          <button type="button" onclick="toggleFavorite('${v.vehicle_id}')">
+            ${saved ? "⭐ Saved" : "☆ Add to Favorites"}
+          </button>
+          <button type="button" onclick="openVehicle('${v.vehicle_id}')">Open</button>
+          <button type="button" onclick="openReport('${v.vehicle_id}')">View Report</button>
+          <button type="button" onclick="quickCompare('${v.vehicle_id}')">Quick Compare</button>
+           <button type="button" onclick="estimateFinanceForVehicle('${v.vehicle_id}')">Finance</button><button type="button" onclick="uploadVehicleEvidence31('${v.vehicle_id}')">Upload Evidence</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renderVehicleList(list){
+  filteredVehicles=[...(list||[])];
+  sortAndRenderVehicles();
+}
+
+function sortAndRenderVehicles(){
+  const c=document.getElementById("vehicleList");
+  const sort=document.getElementById("sortVehicles")?.value||"";
+  const list=[...filteredVehicles];
+
+  list.sort((a,b)=>{
+    const priceA=getVehiclePrice(a), priceB=getVehiclePrice(b);
+    const yearA=Number(a.manufacture_year||0), yearB=Number(b.manufacture_year||0);
+    const kmA=Number(a.current_km||0), kmB=Number(b.current_km||0);
+
+    if(sort==="price_low") return priceA-priceB;
+    if(sort==="price_high") return priceB-priceA;
+    if(sort==="year_new") return yearB-yearA;
+    if(sort==="year_old") return yearA-yearB;
+    if(sort==="km_low") return kmA-kmB;
+    if(sort==="km_high") return kmB-kmA;
+    if(sort==="ai_high") return Number(b.ai_predicted_value||0)-Number(a.ai_predicted_value||0);
+
+    return String(a.vehicle_id).localeCompare(String(b.vehicle_id));
+  });
+
+  filteredVehicles=list;
+  document.getElementById("vehicleCount").textContent=
+    `${list.length} vehicle${list.length===1?"":"s"} found`;
+
+  if(!list.length){
+    c.innerHTML="<p>No vehicles match the selected filters.</p>";
+    return;
+  }
+
+  c.innerHTML=list.map(vehicleCard).join("");
+}
+
+async function loadVehicles(){
+  try{
+    const data=await getJson("/api/vehicles");
+    allVehicles=Array.isArray(data.vehicles)?data.vehicles:[];
+    buildFilterOptions();
+    renderVehicleList(allVehicles);
+    renderFavorites();
+  }catch(e){document.getElementById("vehicleList").innerHTML=`<div class="error">${escapeHtml(e.message)}</div>`}
+}
+function uniqueValues(key){
+  return [...new Set(allVehicles.map(v=>v[key]).filter(x=>x!==null&&x!==undefined&&String(x)!==""))].sort((a,b)=>String(a).localeCompare(String(b)));
+}
+function fillSelect(id,values,allLabel){
+  const el=document.getElementById(id);
+  const current=el.value;
+  el.innerHTML=`<option value="">${allLabel}</option>`+values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+  if(values.includes(current)) el.value=current;
+}
+function buildFilterOptions(){
+  fillSelect("filterBrand",uniqueValues("brand"),"All Brands");
+  fillSelect("filterModel",uniqueValues("model"),"All Models");
+  fillSelect("filterFuel",uniqueValues("fuel_type"),"All Fuel Types");
+  fillSelect("filterTransmission",uniqueValues("transmission"),"All Transmissions");
+}
+
+function getVehiclePrice(v) {
+  const candidates = [
+    v.current_market_value, v.currentMarketValue, v.market_value,
+    v.current_market, v.market_price, v.marketPrice,
+    v.dealer_asking_price, v.dealer_price
+  ];
+  for (const value of candidates) {
+    const n = Number(value);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return 0;
+}
+
+function applyVehicleFilters(){
+  const brand=document.getElementById("filterBrand").value;
+  const model=document.getElementById("filterModel").value;
+  const fuel=document.getElementById("filterFuel").value;
+  const trans=document.getElementById("filterTransmission").value;
+  const minYear=document.getElementById("filterMinYear").value;
+  const maxYear=document.getElementById("filterMaxYear").value;
+  const minKm=document.getElementById("filterMinKm").value;
+  const maxKm=document.getElementById("filterMaxKm").value;
+  const minPrice=document.getElementById("filterMinPrice").value;
+  const maxPrice=document.getElementById("filterMaxPrice").value;
+  const maxOwners=document.getElementById("filterMaxOwners")?.value||"";
+
+  const hasAny=[brand,model,fuel,trans,minYear,maxYear,minKm,maxKm,minPrice,maxPrice,maxOwners]
+    .some(x=>String(x).trim()!=="");
+
+  if(!hasAny){
+    renderVehicleList(allVehicles);
+    return;
+  }
+
+  const result=allVehicles.filter(v=>{
+    const year=Number(v.manufacture_year||0);
+    const km=Number(v.current_km||0);
+    const price=marketValue(v);
+    const owners=Number(v.owner_count||0);
+
+    if(brand&&v.brand!==brand)return false;
+    if(model&&v.model!==model)return false;
+    if(fuel&&v.fuel_type!==fuel)return false;
+    if(trans&&v.transmission!==trans)return false;
+    if(minYear!==""&&year<Number(minYear))return false;
+    if(maxYear!==""&&year>Number(maxYear))return false;
+    if(minKm!==""&&km<Number(minKm))return false;
+    if(maxKm!==""&&km>Number(maxKm))return false;
+    if(minPrice!==""&&price<Number(minPrice))return false;
+    if(maxPrice!==""&&price>Number(maxPrice))return false;
+    if(maxOwners!==""&&owners>Number(maxOwners))return false;
+
+    return true;
+  });
+
+  renderVehicleList(result);
+}
+
+function clearFilters(){
+  ["filterBrand","filterModel","filterFuel","filterTransmission"]
+    .forEach(id=>document.getElementById(id).value="");
+
+  ["filterMinYear","filterMaxYear","filterMinKm","filterMaxKm",
+   "filterMinPrice","filterMaxPrice","filterMaxOwners"]
+    .forEach(id=>document.getElementById(id).value="");
+
+  if(document.getElementById("sortVehicles"))
+    document.getElementById("sortVehicles").value="";
+
+  renderVehicleList(allVehicles);
+}
+
+function toggleVehicle(id,checked){
+  if(checked)selectedVehicles.add(id);else selectedVehicles.delete(id);
+  document.getElementById("compareStatus").textContent=selectedVehicles.size+" vehicle(s) selected";
+}
+function clearComparison(){
+  selectedVehicles.clear();
+  document.querySelectorAll("#vehicleList input[type=checkbox]").forEach(x=>x.checked=false);
+  document.getElementById("compareStatus").textContent="";
+  document.getElementById("comparisonSection").classList.add("hidden");
+}
+function quickCompare(id){
+  selectedVehicles.add(id);
+  document.querySelectorAll("#vehicleList input[type=checkbox]").forEach(x=>{
+    if(x.parentElement.textContent.includes(id)) x.checked=true;
+  });
+  if(selectedVehicles.size>=2) compareSelected();
+  else document.getElementById("compareStatus").textContent="1 vehicle selected — select one more vehicle to compare.";
+}
+async function compareSelected(){
+  if(selectedVehicles.size<2){alert("Select at least 2 vehicles to compare.");return}
+
+  const ids=Array.from(selectedVehicles);
+  const content=document.getElementById("comparisonContent");
+  const section=document.getElementById("comparisonSection");
+  const dashboard=document.getElementById("priceDashboard");
+
+  section.classList.remove("hidden");
+  section.scrollIntoView({behavior:"smooth"});
+  content.innerHTML='<div class="loading">Loading comparison...</div>';
+  if(dashboard) dashboard.classList.add("hidden");
+
+  try{
+    const reports=await Promise.all(ids.map(id=>getJson("/api/report/"+encodeURIComponent(id))));
+
+    const rows=[
+      ["Basic Details","section"],
+      ["Vehicle",d=>`${d.vehicle.brand} ${d.vehicle.model} ${d.vehicle.variant}`],
+      ["Manufacture Year",d=>d.vehicle.manufacture_year],
+      ["Current KM",d=>num(d.vehicle.current_km)+" KM"],
+      ["Owners",d=>d.vehicle.owner_count],
+      ["Fuel",d=>d.vehicle.fuel_type],
+      ["Transmission",d=>d.vehicle.transmission],
+      ["Registration Location",d=>d.vehicle.registration_location],
+      ["Valuation","section"],
+      ["Market Value",d=>money(d.vehicle.current_market_value)],
+      ["AI Estimated Value",d=>money(d.ai_predicted_value)],
+      ["Fair Buying Range",d=>`${money(d.fair_buying_range?.min)} - ${money(d.fair_buying_range?.max)}`],
+      ["Dealer Asking Price",d=>money(d.dealer_asking_price)],
+      ["Market Listing Average",d=>money(d.market_listing_average)],
+      ["Dealer Price Difference",d=>money(d.dealer_price_difference)],
+      ["History & Evidence","section"],
+      ["Vehicle History Score",d=>d.vehicle_history_score?d.vehicle_history_score.score+"/100":"—"],
+      ["Accident Records",d=>(d.accidents||[]).length],
+      ["Service Records",d=>(d.service_history||[]).length],
+      ["Insurance Claims",d=>d.insurance?.claim_count??0],
+      ["Data Quality","section"],
+      ["Data Confidence",d=>d.data_confidence?`${d.data_confidence.status} (${d.data_confidence.percentage}%)`:"—"]
+    ];
+
+    const header=reports.map(d=>`<th>${escapeHtml(d.vehicle.vehicle_id)}</th>`).join("");
+    const body=rows.map(([label,getter])=>{
+      if(getter==="section")return `<tr class="comparison-group"><td colspan="${reports.length+1}">${label}</td></tr>`;
+      return `<tr><td>${label}</td>${reports.map(d=>`<td>${getter(d)}</td>`).join("")}</tr>`;
+    }).join("");
+
+    content.innerHTML=`<div class="table-wrap"><table class="comparison-table"><thead><tr><th>Feature</th>${header}</tr></thead><tbody>${body}</tbody></table></div><p class="muted">Comparison uses records currently stored in CarSure. AI valuation figures are development/sample estimates.</p>`;
+
+    // Price dashboard calculations.
+    const marketPrices=reports.map(d=>Number(d.vehicle.current_market_value||0)).filter(Number.isFinite);
+    const aiPrices=reports.map(d=>Number(d.ai_predicted_value||0)).filter(Number.isFinite);
+
+    const lowest=marketPrices.length?Math.min(...marketPrices):null;
+    const highest=marketPrices.length?Math.max(...marketPrices):null;
+    const average=marketPrices.length?marketPrices.reduce((a,b)=>a+b,0)/marketPrices.length:null;
+    const avgAI=aiPrices.length?aiPrices.reduce((a,b)=>a+b,0)/aiPrices.length:null;
+
+    document.getElementById("dashLowestPrice").textContent=money(lowest);
+    document.getElementById("dashHighestPrice").textContent=money(highest);
+    document.getElementById("dashAveragePrice").textContent=money(average);
+    document.getElementById("dashAverageAI").textContent=money(avgAI);
+
+    const dashboardRows=reports.map(d=>{
+      const v=d.vehicle;
+      const market=Number(v.current_market_value||0);
+      const ai=Number(d.ai_predicted_value||0);
+      const diff=ai-market;
+      return `<tr>
+        <td><strong>${escapeHtml(v.vehicle_id)}</strong></td>
+        <td>${escapeHtml(v.brand)} ${escapeHtml(v.model)} ${escapeHtml(v.variant)}</td>
+        <td>${money(market)}</td>
+        <td>${money(ai)}</td>
+        <td>${signedMoney(diff)}</td>
+        <td>${d.vehicle_history_score?d.vehicle_history_score.score+"/100":"—"}</td>
+      </tr>`;
+    }).join("");
+
+    document.getElementById("dashTable").innerHTML=`
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Vehicle</th><th>Market Price</th><th>AI Value</th><th>AI vs Market</th><th>History</th></tr>
+          </thead>
+          <tbody>${dashboardRows}</tbody>
+        </table>
+      </div>`;
+
+    dashboard.classList.remove("hidden");
+  }catch(e){
+    content.innerHTML=`<div class="error">${escapeHtml(e.message)}</div>`;
+    if(dashboard) dashboard.classList.add("hidden");
+  }
+}
+
+function renderFavorites(){
+  const c=document.getElementById("favoriteList");
+  const saved=allVehicles.filter(v=>isFavorite(v.vehicle_id));
+  if(!saved.length){c.innerHTML="<p class='muted'>No saved vehicles yet. Click ☆ Add to Favorites on a vehicle.</p>";return}
+  c.innerHTML=saved.map(vehicleCard).join("");
+}
+
+function estimateFinanceForVehicle(vehicleId){
+  const v=allVehicles.find(x=>x.vehicle_id===vehicleId);
+  if(!v)return;
+  const price=getVehiclePrice(v);
+  document.getElementById("financePrice").value=price||"";
+  const box=document.getElementById("financePrice");
+  box.scrollIntoView({behavior:"smooth",block:"center"});
+  setTimeout(()=>box.focus(),250);
+}
+
+async function openReport(vehicleId){
+  return loadReport(vehicleId);
+}
+
+async function loadReport(vehicleId){
+  const section=document.getElementById("reportSection");
+  section.classList.remove("hidden");section.scrollIntoView({behavior:"smooth"});
+  try{
+    const data=await getJson("/api/report/"+encodeURIComponent(vehicleId)),v=data.vehicle;
+    upload31VehicleId = vehicleId;
+    renderTrust32(vehicleId,data);
+    document.getElementById("vehicleName").textContent=`${v.brand} ${v.model} ${v.variant}`;
+    document.getElementById("vehicleInfo").textContent=`${v.manufacture_year} • ${num(v.current_km)} KM • ${v.registration_location}`;
+    document.getElementById("aiPrice").textContent=money(data.ai_predicted_value);
+    document.getElementById("fairRange").textContent=data.fair_buying_range?`${money(data.fair_buying_range.min)} - ${money(data.fair_buying_range.max)}`:"—";
+    document.getElementById("dealerPrice").textContent=money(data.dealer_asking_price);
+    document.getElementById("marketAverage").textContent=money(data.market_listing_average);
+    document.getElementById("dealerDifference").textContent=money(data.dealer_price_difference);
+    document.getElementById("historyScore").textContent=data.vehicle_history_score?`${data.vehicle_history_score.score}/100`:"—";
+    document.getElementById("accidentCount").textContent=(data.accidents||[]).length;
+    document.getElementById("serviceCount").textContent=(data.service_history||[]).length;
+    document.getElementById("claimCount").textContent=data.insurance?.claim_count??0;
+    document.getElementById("summaryOwners").textContent=v.owner_count;
+    document.getElementById("summaryKm").textContent=num(v.current_km)+" KM";
+    document.getElementById("dataConfidence").textContent=data.data_confidence?`${data.data_confidence.status} (${data.data_confidence.percentage}%)`:"—";
+    ["brand","model","variant","fuel","transmission","year","location"].forEach((id)=>document.getElementById(id).textContent=v[id==="year"?"manufacture_year":id==="location"?"registration_location":id==="fuel"?"fuel_type":id]); document.getElementById("owners").textContent = v.owner_count ?? "—";
+    document.getElementById("owners").textContent=v.owner_count ?? "—";
+    document.getElementById("km").textContent=num(v.current_km)+" KM";
+    renderAccidents(data.accidents);renderServices(data.service_history);renderInsurance(data.insurance);renderCondition(data.condition);renderKmVerification(data.km_verification);
+    renderValuationAnalysis(data.valuation_analysis);
+    renderConfidence(data.data_confidence,data);
+    renderTrust32(vehicleId,data);
+  }catch(e){alert(e.message)}
+}
+function trustSet32(id,textValue,state){
+  const e=document.getElementById(id);
+  if(!e)return;
+  e.textContent=textValue;
+  e.className="trust32-status "+(state||"");
+}
+function trustLabel32(available,labelOk="Verified",labelNo="Not available"){return available?labelOk:labelNo}
+function renderTrust32(vehicleId,data){
+  const v=data?.vehicle||{};
+  const accidents=data?.accidents||[];
+  const services=data?.service_history||[];
+  const insurance=!!data?.insurance;
+  const condition=!!data?.condition;
+  const km=!!data?.km_verification;
+  const uploads=upload31Data?.[vehicleId]||{photos:[],documents:[]};
+  const photos=(uploads.photos||[]).length>0;
+  const docs=(uploads.documents||[]).length>0;
+  const signals=[!!v.vehicle_id,accidents.length>0,services.length>0,insurance,condition,km,photos,docs];
+  const count=signals.filter(Boolean).length;
+  const pct=Math.round(count/signals.length*100);
+  trustSet32("trustVehicle32",v.vehicle_id?"Verified record":"Not available",v.vehicle_id?"ok":"none");
+  trustSet32("trustAccident32",accidents.length?`${accidents.length} record(s) available`:"No accident evidence stored",accidents.length?"ok":"none");
+  trustSet32("trustService32",services.length?`${services.length} record(s) available`:"No service evidence stored",services.length?"ok":"none");
+  trustSet32("trustInsurance32",insurance?"Insurance record available":"No insurance record",insurance?"ok":"none");
+  trustSet32("trustCondition32",condition?"Inspection record available":"No inspection record",condition?"ok":"none");
+  trustSet32("trustKm32",km?(data.km_verification.status||"Verification available"):"Not available",km?"ok":"none");
+  trustSet32("trustPhoto32",photos?`${uploads.photos.length} photo(s) stored` : "No photos stored",photos?"ok":"none");
+  trustSet32("trustDocument32",docs?`${uploads.documents.length} document(s) stored` : "No documents stored",docs?"ok":"none");
+  trustSet32("trustCoverage32",`${count}/${signals.length} evidence areas`,count>=6?"ok":count>=3?"partial":"none");
+  document.getElementById("trustScore32").textContent=`${pct}% (${count}/${signals.length})`;
+  const reportMap=[
+    ["reportTrustVehicle32",v.vehicle_id,"ok"],["reportTrustAccident32",accidents.length?`${accidents.length} record(s) available`:"Not available",accidents.length?"ok":"none"],
+    ["reportTrustService32",services.length?`${services.length} record(s) available`:"Not available",services.length?"ok":"none"],["reportTrustInsurance32",insurance?"Available":"Not available",insurance?"ok":"none"],
+    ["reportTrustCondition32",condition?"Available":"Not available",condition?"ok":"none"],["reportTrustKm32",km?(data.km_verification.status||"Available"):"Not available",km?"ok":"none"],
+    ["reportTrustPhoto32",photos?`${uploads.photos.length} photo(s) stored`:"Not available",photos?"ok":"none"],["reportTrustDocument32",docs?`${uploads.documents.length} document(s) stored`:"Not available",docs?"ok":"none"],["reportTrustCoverage32",`${count}/${signals.length} areas (${pct}%)`,count>=6?"ok":count>=3?"partial":"none"]
+  ];
+  reportMap.forEach(([id,val,state])=>{const e=document.getElementById(id);if(e){e.textContent=val;e.dataset.state=state;}});
+}
+async function refreshTrust32(){
+  if(!upload31VehicleId){alert("Open, view report, or upload evidence for a vehicle first.");return;}
+  try{const data=await getJson("/api/report/"+encodeURIComponent(upload31VehicleId));renderTrust32(upload31VehicleId,data);document.getElementById("trust32Section")?.scrollIntoView({behavior:"smooth",block:"start"});}
+  catch(e){alert(e.message)}
+}
+
+function renderValuationAnalysis(a){
+  a=a||{};
+  document.getElementById("reportAge").textContent=a.age_years!==undefined?a.age_years+" years":"—";
+  document.getElementById("marketRetention").textContent=a.market_value_retention_percent!=null?Number(a.market_value_retention_percent).toFixed(1)+"%":"—";
+  document.getElementById("onroadDepreciation").textContent=a.depreciation_from_original_onroad_percent!=null?Number(a.depreciation_from_original_onroad_percent).toFixed(1)+"%":"—";
+  document.getElementById("aiVsMarket").textContent=signedMoney(a.ai_vs_market_difference);
+  document.getElementById("aiVsDealer").textContent=signedMoney(a.ai_vs_listing_difference);
+  const dealerVsMarket=a.ai_vs_listing_difference!=null&&a.ai_vs_market_difference!=null?Number(a.ai_vs_listing_difference)-Number(a.ai_vs_market_difference):null;
+  document.getElementById("dealerVsMarket").textContent=signedMoney(dealerVsMarket);
+}
+function signedMoney(v){if(v==null||Number.isNaN(Number(v)))return"—";return(v>=0?"+":"−")+money(Math.abs(v))}
+function renderConfidence(c,d){
+  c=c||{};document.getElementById("confidenceStatus").textContent=c.status||"Unavailable";
+  document.getElementById("confidencePercentage").textContent=c.percentage!=null?c.percentage+"%":"—";
+  const e=[];
+  if(c.vehicle_record)e.push("Vehicle record available");
+  if(c.accident_records!==undefined)e.push("Accident records: "+c.accident_records);
+  if(c.service_records!==undefined)e.push("Service records: "+c.service_records);
+  if(c.insurance_record)e.push("Insurance record available");
+  if(c.condition_record)e.push("Condition inspection available");
+  if(c.km_verification)e.push("KM verification available");
+  if(!e.length){e.push("Vehicle record available");e.push("Accident records: "+(d.accidents||[]).length);e.push("Service records: "+(d.service_history||[]).length);if(d.insurance)e.push("Insurance record available");if(d.condition)e.push("Condition inspection available");if(d.km_verification)e.push("KM verification available")}
+  document.getElementById("evidenceCoverage").textContent=e.length+" evidence signals";
+  document.getElementById("evidenceList").textContent=e.join(" • ");
+}
+function renderAccidents(items){
+  const e=document.getElementById("accidents");if(!items||!items.length){e.innerHTML="<p>No accident records available.</p>";return}
+  e.innerHTML=items.map(a=>`<div class="history-item"><strong>${escapeHtml(a.accident_date||"Date unavailable")}</strong><br>Side: ${escapeHtml(a.accident_side||"N/A")}<br>Affected Area: ${escapeHtml(a.affected_area||"N/A")}<br>Severity: ${escapeHtml(a.severity||"N/A")}<br>Repair: ${escapeHtml(a.repair_details||"N/A")}<br>Insurance Claim: ${escapeHtml(a.insurance_claim||"N/A")}<br>Claim Amount: ${money(a.claim_amount)}<br>Evidence: ${escapeHtml(a.evidence_source||"N/A")}</div>`).join("");
+}
+function renderServices(items){
+  const e=document.getElementById("services");if(!items||!items.length){e.innerHTML="<p>No service records available.</p>";return}
+  e.innerHTML=items.map(s=>`<div class="history-item"><strong>${escapeHtml(s.service_date||"Date unavailable")}</strong><br>Type: ${escapeHtml(s.service_type||"N/A")}<br>Odometer: ${num(s.odometer_km)} KM<br>Centre: ${escapeHtml(s.service_center||s.service_centre||"N/A")}<br>Work: ${escapeHtml(s.work_performed||"N/A")}<br>Parts: ${escapeHtml(s.parts_replaced||"N/A")}<br>Cost: ${money(s.service_cost)}</div>`).join("");
+}
+function renderInsurance(p){
+  const e=document.getElementById("insurance");if(!p){e.innerHTML="<p>No insurance records available.</p>";return}
+  e.innerHTML=`<div class="history-item"><strong>${escapeHtml(p.insurance_company||"Insurance Company")}</strong><br>Status: ${escapeHtml(p.insurance_status||"N/A")}<br>Policy: ${escapeHtml(p.policy_number||"N/A")}<br>Claims: ${p.claim_count??0}<br>Claim Amount: ${money(p.claim_amount)}<br>From: ${escapeHtml(p.insurance_from||"N/A")}<br>To: ${escapeHtml(p.insurance_to||"N/A")}<br>Source: ${escapeHtml(p.claim_count_source||"Insurance record")}</div>`;
+}
+function renderCondition(c){
+  const e=document.getElementById("condition");if(!c){e.innerHTML="<p>No condition inspection record available.</p>";return}
+  const labels={engine_condition:"Engine",gearbox_condition:"Gearbox",brake_condition:"Brakes",tyre_condition:"Tyres",battery_condition:"Battery",suspension_condition:"Suspension",exterior_condition:"Exterior",interior_condition:"Interior",flood_damage:"Flood Damage",fire_damage:"Fire Damage",modifications:"Modifications"};
+  e.innerHTML=Object.entries(labels).map(([k,l])=>`<div class="detail" style="display:inline-block;width:31%;margin:1%"><strong>${l}</strong>${escapeHtml(c[k]??"N/A")}</div>`).join("");
+}
+function renderKmVerification(k){
+  const e=document.getElementById("kmVerification");if(!k){e.innerHTML="<p>No KM verification data available.</p>";return}
+  e.innerHTML=`<div class="details-grid"><div class="detail"><strong>Current KM</strong>${num(k.current_km)} KM</div><div class="detail"><strong>Latest Documented Service KM</strong>${num(k.latest_documented_service_km)} KM</div><div class="detail"><strong>Status</strong>${escapeHtml(k.status||"N/A")}</div></div><p class="muted">${escapeHtml(k.evidence_note||"")}</p>${k.issues?.length?`<div class="error">${k.issues.map(escapeHtml).join("<br>")}</div>`:""}`;
+}
+
+function calculateFinance(){
+  const price=Number(document.getElementById("financePrice").value||0);
+  const percent=Number(document.getElementById("financePercent").value||75);
+  const tenure=Number(document.getElementById("financeTenure").value||5);
+
+  if(!Number.isFinite(price)||price<=0){
+    alert("Enter a valid vehicle market value.");
+    return;
+  }
+
+  const financeAmount=price*(percent/100);
+  const downPayment=price-financeAmount;
+
+  document.getElementById("financeVehicleValue").textContent=money(price);
+  document.getElementById("financeAmount").textContent=money(financeAmount);
+  document.getElementById("financeDownPayment").textContent=money(downPayment);
+  document.getElementById("financeTenureResult").textContent=tenure+" years";
+
+  document.getElementById("financeNote").textContent=
+    `Indicative estimate based on ${percent}% of the entered vehicle value. Actual lender eligibility, interest rate, processing fees, tenure and approved amount depend on the lender and applicant's profile. CarSure does not provide or approve loans.`;
+
+  document.getElementById("financeResult").classList.remove("hidden");
+}
+
+function clearFinance(){
+  document.getElementById("financePrice").value="";
+  document.getElementById("financePercent").value="75";
+  document.getElementById("financeTenure").value="5";
+  document.getElementById("financeResult").classList.add("hidden");
+}
+
+function valuationInput(){
+  return {brand:document.getElementById("vBrand").value.trim(),model:document.getElementById("vModel").value.trim(),variant:document.getElementById("vVariant").value.trim(),fuel_type:document.getElementById("vFuel").value,transmission:document.getElementById("vTransmission").value,manufacture_year:Number(document.getElementById("vYear").value),current_km:Number(document.getElementById("vKm").value),owner_count:Number(document.getElementById("vOwners").value),registration_location:document.getElementById("vLocation").value.trim()};
+}
+function showStatus(message,success=true){
+  const e=document.getElementById("valuationStatus");e.classList.remove("hidden","success","error");e.classList.add(success?"success":"error");e.textContent=message;
+}
+async function estimateVehicle(){
+  try{
+    const input=valuationInput(),data=await getJson("/api/estimate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(input)});
+    currentEstimate=input;
+    document.getElementById("estimateValue").textContent=money(data.ai_predicted_value);
+    document.getElementById("estimateRange").textContent=`${money(data.fair_buying_range.min)} - ${money(data.fair_buying_range.max)}`;
+    document.getElementById("estimateAge").textContent=data.vehicle_age+" years";
+    document.getElementById("estimateKm").textContent=num(input.current_km)+" KM";
+    document.getElementById("estimateNote").textContent=data.depreciation_note;
+    document.getElementById("valuationResult").classList.remove("hidden");
+    document.getElementById("saveValuationBtn").disabled=false;
+    showStatus("Estimate generated. Estimate ready to save to CarSure.",true);
+  }catch(e){currentEstimate=null;document.getElementById("saveValuationBtn").disabled=true;showStatus(e.message,false)}
+}
+async function saveValuation(){
+  if(!currentEstimate){showStatus("Generate an estimate first.",false);return}
+  try{
+    const d=await getJson("/api/save-valuation",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(currentEstimate)});
+    showStatus(`Saved successfully. Valuation ID: ${d.valuation_id}`,true);await loadValuationHistory();
+  }catch(e){showStatus(e.message,false)}
+}
+function clearValuation(){
+  ["vBrand","vModel","vVariant","vYear","vKm","vOwners","vLocation"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("vFuel").value="";document.getElementById("vTransmission").value="";
+  document.getElementById("valuationResult").classList.add("hidden");document.getElementById("saveValuationBtn").disabled=true;document.getElementById("valuationStatus").classList.add("hidden");currentEstimate=null;
+}
+async function loadValuationHistory(){
+  const c=document.getElementById("valuationHistory");
+  try{
+    const d=await getJson("/api/valuation-history");
+    if(!d.valuations?.length){c.innerHTML="<p>No saved valuations yet.</p>";return}
+    c.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Valuation ID</th><th>Date & Time</th><th>Vehicle</th><th>Year</th><th>KM</th><th>AI Value</th><th>Fair Range</th></tr></thead><tbody>${d.valuations.map(v=>`<tr><td><button class="history-link" onclick="openValuationDetails('${escapeHtml(v.valuation_id)}')">${escapeHtml(v.valuation_id)}</button></td><td>${escapeHtml(v.created_at)}</td><td>${escapeHtml(v.brand)} ${escapeHtml(v.model)} ${escapeHtml(v.variant)}</td><td>${v.manufacture_year}</td><td>${num(v.current_km)} KM</td><td>${money(v.ai_predicted_value)}</td><td>${money(v.fair_buying_range?.min)} - ${money(v.fair_buying_range?.max)}</td></tr>`).join("")}</tbody></table></div>`;
+  }catch(e){c.innerHTML=`<div class="error">${escapeHtml(e.message)}</div>`}
+}
+async function openValuationDetails(id){
+  const m=document.getElementById("valuationModal"),c=document.getElementById("valuationModalContent");m.classList.remove("hidden");c.innerHTML='<div class="loading">Loading valuation details...</div>';
+  try{
+    const d=await getJson("/api/valuation/"+encodeURIComponent(id)),v=d.valuation||d,r=v.fair_buying_range||{min:v.fair_buying_min,max:v.fair_buying_max};
+    c.innerHTML=`<div class="status success">Saved valuation loaded successfully.</div><div class="modal-grid">
+      <div class="modal-field"><strong>VALUATION ID</strong>${escapeHtml(v.valuation_id)}</div><div class="modal-field"><strong>DATE & TIME</strong>${escapeHtml(v.created_at)}</div>
+      <div class="modal-field"><strong>BRAND</strong>${escapeHtml(v.brand)}</div><div class="modal-field"><strong>MODEL</strong>${escapeHtml(v.model)}</div>
+      <div class="modal-field"><strong>VARIANT</strong>${escapeHtml(v.variant)}</div><div class="modal-field"><strong>FUEL TYPE</strong>${escapeHtml(v.fuel_type)}</div>
+      <div class="modal-field"><strong>TRANSMISSION</strong>${escapeHtml(v.transmission)}</div><div class="modal-field"><strong>MANUFACTURE YEAR</strong>${v.manufacture_year}</div>
+      <div class="modal-field"><strong>CURRENT KM</strong>${num(v.current_km)} KM</div><div class="modal-field"><strong>OWNER COUNT</strong>${v.owner_count}</div>
+      <div class="modal-field"><strong>REGISTRATION LOCATION</strong>${escapeHtml(v.registration_location)}</div><div class="modal-field"><strong>DATA STATUS</strong>${escapeHtml(v.data_status||"N/A")}</div>
+    </div><div class="valuation-grid" style="margin-top:20px"><div class="price-card"><h3>AI PREDICTED VALUE</h3><div class="price">${money(v.ai_predicted_value)}</div></div><div class="price-card"><h3>FAIR BUYING MIN</h3><div class="price">${money(r.min)}</div></div><div class="price-card"><h3>FAIR BUYING MAX</h3><div class="price">${money(r.max)}</div></div></div>`;
+  }catch(e){c.innerHTML=`<div class="error"><strong>Could not load saved valuation.</strong><br>${escapeHtml(e.message)}</div>`}
+}
+function closeValuationModal(event){if(event&&event.target&&event.target.id!=="valuationModal")return;document.getElementById("valuationModal").classList.add("hidden")}
+
+function generatePrintReport(){
+  const section=document.getElementById("reportSection");
+  if(section.classList.contains("hidden")){
+    alert("Open a vehicle report first, then generate the valuation report.");
+    return;
+  }
+
+  const get=id=>document.getElementById(id)?.textContent||"—";
+  const title=get("vehicleName");
+  const info=get("vehicleInfo");
+
+  const report=document.getElementById("printReport");
+  report.innerHTML=`
+    <div class="report-page">
+      <div class="report-cover">
+        <div class="report-brand">CarSure</div>
+        <div class="report-sub">Used Car Valuation & Vehicle History Platform</div>
+        <div class="report-title">${escapeHtml(title)}</div>
+        <div class="report-sub">${escapeHtml(info)}</div>
+      </div>
+
+      <div class="report-section">
+        <h3>Valuation Summary</h3>
+        <div class="report-grid">
+          <div class="report-box"><small>AI Estimated Value</small><strong>${get("aiPrice")}</strong></div>
+          <div class="report-box"><small>Fair Buying Range</small><strong>${get("fairRange")}</strong></div>
+          <div class="report-box"><small>Dealer Asking Price</small><strong>${get("dealerPrice")}</strong></div>
+          <div class="report-box"><small>Market Listing Average</small><strong>${get("marketAverage")}</strong></div>
+          <div class="report-box"><small>Dealer Price Difference</small><strong>${get("dealerDifference")}</strong></div>
+          <div class="report-box"><small>Vehicle History Score</small><strong>${get("historyScore")}</strong></div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <h3>Valuation Analysis</h3>
+        <table class="report-table">
+          <tr><th>Vehicle Age</th><td>${get("reportAge")}</td></tr>
+          <tr><th>Market Value Retention</th><td>${get("marketRetention")}</td></tr>
+          <tr><th>Depreciation From Original On-road</th><td>${get("onroadDepreciation")}</td></tr>
+          <tr><th>AI vs Market</th><td>${get("aiVsMarket")}</td></tr>
+          <tr><th>AI vs Dealer Listing</th><td>${get("aiVsDealer")}</td></tr>
+          <tr><th>Dealer vs Market Listing</th><td>${get("dealerVsMarket")}</td></tr>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <h3>Data Confidence & Evidence</h3>
+        <table class="report-table">
+          <tr><th>Confidence Status</th><td>${get("confidenceStatus")}</td></tr>
+          <tr><th>Confidence Score</th><td>${get("confidencePercentage")}</td></tr>
+          <tr><th>Evidence Coverage</th><td>${get("evidenceCoverage")}</td></tr>
+        </table>
+        <p>${escapeHtml(get("evidenceList"))}</p>
+      </div>
+
+      <div class="report-section">
+        <h3>Vehicle Details</h3>
+        <table class="report-table">
+          <tr><th>Brand</th><td>${get("brand")}</td><th>Model</th><td>${get("model")}</td></tr>
+          <tr><th>Variant</th><td>${get("variant")}</td><th>Fuel</th><td>${get("fuel")}</td></tr>
+          <tr><th>Transmission</th><td>${get("transmission")}</td><th>Manufacturing Year</th><td>${get("year")}</td></tr>
+          <tr><th>Current KM</th><td>${get("km")}</td><th>Owners</th><td>${get("owners")}</td></tr>
+          <tr><th>Registration Location</th><td colspan="3">${get("location")}</td></tr>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <h3>Accident History</h3>
+        ${document.getElementById("accidents")?.innerHTML||"<p>No accident records available.</p>"}
+      </div>
+
+      <div class="report-section">
+        <h3>Service History</h3>
+        ${document.getElementById("services")?.innerHTML||"<p>No service records available.</p>"}
+      </div>
+
+      <div class="report-section">
+        <h3>Insurance</h3>
+        ${document.getElementById("insurance")?.innerHTML||"<p>No insurance records available.</p>"}
+      </div>
+
+      <div class="report-section">
+        <h3>Vehicle Condition</h3>
+        ${document.getElementById("condition")?.innerHTML||"<p>No condition inspection record available.</p>"}
+      </div>
+
+      <div class="report-section">
+        <h3>KM Verification</h3>
+        ${document.getElementById("kmVerification")?.innerHTML||"<p>No KM verification data available.</p>"}
+      </div>
+
+      <div class="report-footer">
+        CarSure valuation report. AI valuation figures are development/sample estimates and should not be treated as a guaranteed market price.
+        Vehicle history information is based on records currently available in CarSure. This report does not independently certify ownership,
+        accident, service, insurance, or odometer authenticity.
+      </div>
+    </div>
+  `;
+  window.scrollTo({top:0,behavior:"smooth"});
+  setTimeout(()=>window.print(),300);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{loadVehicles();loadValuationHistory()});
+
+async function openVehicle(vehicleId){
+  upload31VehicleId = vehicleId;
+  if (typeof loadUploads31 === "function") loadUploads31(vehicleId);
+  const m=document.getElementById("detail25Modal"), b=document.getElementById("d25Body");
+  m.classList.remove("hidden"); b.innerHTML="<div class='loading'>Loading vehicle details...</div>";
+  try{const d=await getJson("/api/report/"+encodeURIComponent(vehicleId)); renderVehicleDetail25(d);}
+  catch(e){b.innerHTML="<div class='error'>"+escapeHtml(e.message)+"</div>";}
+}
+function closeVehicleDetail(){document.getElementById("detail25Modal").classList.add("hidden")}
+function renderVehicleDetail25(d){
+ const v=d.vehicle||{}, a=d.valuation_analysis||{}, c=d.condition||{}, k=d.km_verification||{};
+ const fair=d.fair_buying_range||{};
+ const accidents=d.accidents||[], services=d.service_history||[];
+ const ins=d.insurance;
+ document.getElementById("d25Title").textContent=`${v.brand||""} ${v.model||""} ${v.variant||""}`.trim();
+ document.getElementById("d25Sub").textContent=`${v.vehicle_id||""} • CarSure Vehicle Details`;
+ const rows=(arr,cols)=>arr.length?`<div class="table-wrap"><table class="d25-table"><tr>${cols.map(x=>`<th>${x[0]}</th>`).join("")}</tr>${arr.map(x=>`<tr>${cols.map(y=>`<td>${escapeHtml(x[y[1]]??"—")}</td>`).join("")}</tr>`).join("")}</table></div>`:"<div class='status'>No documented records available.</div>";
+ b=document.getElementById("d25Body");
+ b.innerHTML=`
+ <div class="d25-grid">
+  <div class="d25-box"><small>YEAR</small><strong>${v.manufacture_year||"—"}</strong></div>
+  <div class="d25-box"><small>KM DRIVEN</small><strong>${num(v.current_km)} KM</strong></div>
+  <div class="d25-box"><small>OWNERS</small><strong>${v.owner_count||"—"}</strong></div>
+  <div class="d25-box"><small>LOCATION</small><strong>${escapeHtml(v.registration_location)}</strong></div>
+  <div class="d25-box"><small>FUEL</small><strong>${escapeHtml(v.fuel_type)}</strong></div>
+  <div class="d25-box"><small>TRANSMISSION</small><strong>${escapeHtml(v.transmission)}</strong></div>
+  <div class="d25-box"><small>HISTORY SCORE</small><strong>${d.vehicle_history_score?.score??d.vehicle_history_score??"—"}/100</strong></div>
+  <div class="d25-box"><small>DATA CONFIDENCE</small><strong>${escapeHtml(d.data_confidence?.status||"—")}</strong></div>
+ </div>
+ <div class="d25-section"><h3>💰 Price Analysis</h3><div class="d25-prices">
+  <div class="d25-price"><small>Market Value</small><strong>${money(v.current_market_value)}</strong></div>
+  <div class="d25-price"><small>AI Estimate</small><strong>${money(d.ai_predicted_value)}</strong></div>
+  <div class="d25-price"><small>Fair Range</small><strong>${money(fair.min)} - ${money(fair.max)}</strong></div>
+  <div class="d25-price"><small>Dealer Asking</small><strong>${money(d.dealer_asking_price)}</strong></div>
+ </div></div>
+ <div class="d25-section"><h3>📊 Valuation Analysis</h3><div class="d25-tags">
+  <span class="d25-tag">Age: <b>${a.age_years??"—"} years</b></span>
+  <span class="d25-tag">Retention: <b>${a.market_value_retention_percent??"—"}%</b></span>
+  <span class="d25-tag">Depreciation: <b>${a.depreciation_from_original_onroad_percent??"—"}%</b></span>
+  <span class="d25-tag">AI vs Market: <b>${signedMoney(a.ai_vs_market_difference)}</b></span>
+  <span class="d25-tag">AI vs Dealer: <b>${signedMoney(a.ai_vs_listing_difference)}</b></span>
+  <span class="d25-tag">Listing Avg: <b>${money(d.market_listing_average)}</b></span>
+ </div></div>
+ <div class="d25-section"><h3>🚨 Accident History</h3>${rows(accidents,[["Date","accident_date"],["Side","accident_side"],["Area","affected_area"],["Severity","severity"],["Repair","repair_details"],["Claim","insurance_claim"]])}</div>
+ <div class="d25-section"><h3>🛠️ Service History</h3>${rows(services,[["Date","service_date"],["KM","odometer_km"],["Centre","service_center"],["Work","work_performed"],["Cost","service_cost"]])}</div>
+ <div class="d25-section"><h3>🛡️ Insurance</h3>${ins?`<div class="d25-tags"><span class="d25-tag">Company: <b>${escapeHtml(ins.insurance_company||"—")}</b></span><span class="d25-tag">Status: <b>${escapeHtml(ins.insurance_status||"—")}</b></span><span class="d25-tag">Claims: <b>${ins.claim_count??0}</b></span><span class="d25-tag">Claim Amount: <b>${money(ins.claim_amount)}</b></span></div>`:"<div class='status'>No insurance record available.</div>"}</div>
+ <div class="d25-section"><h3>🔧 Vehicle Condition</h3><div class="d25-tags">${Object.entries(c).filter(x=>!["condition_id","vehicle_id"].includes(x[0])).map(x=>`<span class="d25-tag">${escapeHtml(x[0].replaceAll("_"," "))}: <b>${escapeHtml(x[1])}</b></span>`).join("")||"No condition record."}</div></div>
+ <div class="d25-section"><h3>📏 KM Verification</h3><div class="d25-tags"><span class="d25-tag">Current KM: <b>${num(k.current_km)}</b></span><span class="d25-tag">Latest documented KM: <b>${num(k.latest_documented_service_km)}</b></span><span class="d25-tag">Status: <b>${escapeHtml(k.status||"—")}</b></span></div></div>
+ </div>`;
+}
+
+
+// ==================== Step 31: Photo & Document Upload ====================
+let upload31VehicleId = null;
+let upload31Data = JSON.parse(localStorage.getItem("carsureUploads31") || "{}");
+
+async function selectUploadVehicle31(vehicleId){
+  upload31VehicleId = vehicleId;
+  loadUploads31(vehicleId);
+  try{const data=await getJson("/api/report/"+encodeURIComponent(vehicleId));renderTrust32(vehicleId,data);}
+  catch(e){console.error("Trust verification refresh failed:",e)}
+  document.getElementById("upload31Section")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function upload31Key(){ return upload31VehicleId || "UNSELECTED"; }
+
+function getUploadRecord31(){
+  const key=upload31Key();
+  if(!upload31Data[key]) upload31Data[key]={photos:[],documents:[]};
+  return upload31Data[key];
+}
+
+function persistUploads31(){ localStorage.setItem("carsureUploads31",JSON.stringify(upload31Data)); }
+
+function handlePhotoUpload31(event){
+  const files=[...(event.target.files||[])];
+  const rec=getUploadRecord31();
+  const preview=document.getElementById("photoPreview31");
+  preview.innerHTML="";
+  rec.photos=[];
+  let loaded=0;
+  if(!files.length){loadUploads31(upload31VehicleId);return;}
+  files.slice(0,8).forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      rec.photos.push({name:file.name,type:file.type,size:file.size,dataUrl:reader.result});
+      const img=document.createElement("img"); img.src=reader.result; img.alt=file.name; preview.appendChild(img);
+      loaded++;
+      document.getElementById("photoStatus31").textContent=`${loaded} photo(s) selected.`;
+      document.getElementById("photoStatus31").className="upload31-status ok";
+      if(loaded===Math.min(files.length,8)) persistUploads31();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleDocumentUpload31(event,type){
+  const files=[...(event.target.files||[])];
+  const rec=getUploadRecord31();
+  rec.documents=rec.documents.filter(x=>x.type!==type);
+  files.forEach(file=>rec.documents.push({type,name:file.name,mime:file.type,size:file.size}));
+  persistUploads31();
+  loadUploads31(upload31VehicleId);
+}
+
+function formatUploadSize31(bytes){
+  if(bytes<1024)return bytes+" B"; if(bytes<1024*1024)return (bytes/1024).toFixed(1)+" KB"; return (bytes/1024/1024).toFixed(1)+" MB";
+}
+
+function loadUploads31(vehicleId){
+  if(vehicleId) upload31VehicleId=vehicleId;
+  const rec=getUploadRecord31();
+  const photoPreview=document.getElementById("photoPreview31");
+  if(photoPreview){photoPreview.innerHTML=(rec.photos||[]).map(p=>`<img src="${p.dataUrl}" alt="${escapeHtml(p.name)}">`).join("");}
+  const ps=document.getElementById("photoStatus31");
+  if(ps){ps.textContent=rec.photos?.length?`${rec.photos.length} photo(s) saved for ${upload31VehicleId}.`:"No photos selected.";ps.className=rec.photos?.length?"upload31-status ok":"upload31-status";}
+  const rc=(rec.documents||[]).filter(x=>x.type==='rc');
+  const ins=(rec.documents||[]).filter(x=>x.type==='insurance');
+  const ev=(rec.documents||[]).filter(x=>x.type==='evidence');
+  setUploadStatus31("rcStatus31",rc,"RC document uploaded.");
+  setUploadStatus31("insuranceStatus31",ins,"Insurance document uploaded.");
+  setUploadStatus31("evidenceStatus31",ev,`${ev.length} evidence file(s) uploaded.`);
+  const list=document.getElementById("evidenceFiles31");
+  if(list)list.innerHTML=ev.map(x=>`<div class="upload31-file">📎 ${escapeHtml(x.name)} <span>(${formatUploadSize31(x.size)})</span></div>`).join("");
+  const summary=document.getElementById("uploadSummary31");
+  if(summary){const total=(rec.photos?.length||0)+(rec.documents?.length||0);summary.innerHTML=upload31VehicleId?`<b>Vehicle:</b> ${escapeHtml(upload31VehicleId)} &nbsp;•&nbsp; <b>${total}</b> upload record(s) saved in this browser.`+ (total?"":" Add photos or documents above."):"Select a vehicle using the Finance/Upload action on a vehicle card, then add evidence.";}
+}
+
+function setUploadStatus31(id,items,success){
+  const el=document.getElementById(id); if(!el)return;
+  el.textContent=items.length?`${success} ${items.map(x=>x.name).join(", ")}`:"Not uploaded.";
+  el.className=items.length?"upload31-status ok":"upload31-status";
+}
+
+function saveUploads31(){
+  if(!upload31VehicleId){
+    alert("First select a vehicle from the vehicle card."); return;
+  }
+  persistUploads31();
+  alert(`Upload record saved for ${upload31VehicleId}.`);
+  loadUploads31(upload31VehicleId);
+}
+
+function clearUploads31(){
+  if(!upload31VehicleId){alert("First select a vehicle.");return;}
+  if(!confirm(`Clear all upload records for ${upload31VehicleId}?`))return;
+  delete upload31Data[upload31VehicleId]; persistUploads31();
+  ["vehiclePhotos31","rcDocument31","insuranceDocument31","evidenceDocuments31"].forEach(id=>{const e=document.getElementById(id);if(e)e.value="";});
+  loadUploads31(upload31VehicleId);
+}
+
+function uploadVehicleEvidence31(vehicleId){ selectUploadVehicle31(vehicleId); }
+
+
+const ACCOUNT_KEY_33="carsureAccount33",SESSION_KEY_33="carsureSession33";
+function getAccount33(){try{return JSON.parse(localStorage.getItem(ACCOUNT_KEY_33)||"null")}catch(e){return null}}
+function getSession33(){try{return JSON.parse(localStorage.getItem(SESSION_KEY_33)||"null")}catch(e){return null}}
+function showAccountMessage33(m,ok){const b=document.getElementById("accountMessage33");if(!b)return;b.textContent=m;b.classList.remove("hidden");b.classList.toggle("ok",!!ok);b.classList.toggle("error",!ok)}
+function registerAccount33(){
+ const n=(document.getElementById("accountName33")?.value||"").trim(),e=(document.getElementById("accountEmail33")?.value||"").trim().toLowerCase(),p=document.getElementById("accountPassword33")?.value||"";
+ if(!n||!e||!p)return showAccountMessage33("Please enter your name, email and password.",false);
+ if(p.length<4)return showAccountMessage33("Password must contain at least 4 characters.",false);
+ localStorage.setItem(ACCOUNT_KEY_33,JSON.stringify({name:n,email:e,password:p,createdAt:new Date().toISOString()}));
+ localStorage.setItem(SESSION_KEY_33,JSON.stringify({email:e}));
+ renderAccount33();
+}
+function loginAccount33(){
+ const e=(document.getElementById("accountEmail33")?.value||"").trim().toLowerCase(),p=document.getElementById("accountPassword33")?.value||"",a=getAccount33();
+ if(!a)return showAccountMessage33("No prototype account found. Create an account first.",false);
+ if(e!==a.email||p!==a.password)return showAccountMessage33("Email or password is incorrect.",false);
+ localStorage.setItem(SESSION_KEY_33,JSON.stringify({email:e}));renderAccount33();
+}
+function logoutAccount33(){localStorage.removeItem(SESSION_KEY_33);renderAccount33()}
+function refreshAccountDashboard33(){
+ let f=[];try{f=JSON.parse(localStorage.getItem("carsureFavorites")||"[]")}catch(e){}
+ const rows=document.querySelectorAll("#valuationHistoryBody tr").length;
+ let u=0;try{const d=JSON.parse(localStorage.getItem("carsureUploads31")||"{}");Object.values(d).forEach(x=>{u+=(x?.photos?.length||0)+(x?.documents?.length||0)+(x?.serviceEvidence?.length||0)})}catch(e){}
+ document.getElementById("accountFavorites33").textContent=Array.isArray(f)?f.length:0;
+ document.getElementById("accountValuations33").textContent=rows;
+ document.getElementById("accountReports33").textContent=rows;
+ document.getElementById("accountUploads33").textContent=u;
+}
+function renderAccount33(){
+ const a=getAccount33(),s=getSession33(),logged=!!(a&&s&&a.email===s.email);
+ document.getElementById("accountLoggedOut33")?.classList.toggle("hidden",logged);
+ document.getElementById("accountLoggedIn33")?.classList.toggle("hidden",!logged);
+ if(logged){
+  document.getElementById("accountDisplayName33").textContent=a.name||"User";
+  document.getElementById("accountDisplayEmail33").textContent=a.email||"";
+  document.getElementById("accountAvatar33").textContent=(a.name||"U").charAt(0).toUpperCase();
+  refreshAccountDashboard33();
+ }
+}
+document.addEventListener("DOMContentLoaded",()=>setTimeout(renderAccount33,300));
+
+
+/* Step 34 mobile helpers */
+function carsureMobileCheck34(){
+  document.body.classList.toggle("carsure-mobile-34", window.innerWidth <= 600);
+}
+window.addEventListener("resize", carsureMobileCheck34);
+document.addEventListener("DOMContentLoaded", carsureMobileCheck34);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+vehicle_id,brand,model,variant,colour,fuel_type,transmission,manufacture_month,manufacture_year,registration_date,registration_year,registration_location,current_km,owner_count,original_ex_showroom_price,original_onroad_price,current_market_value,dealer_asking_price
+CAR001,Maruti Suzuki,Swift,VXi,White,Petrol,Manual,2021-03,2021,2021-04-15,2021,Hyderabad,42000,1,620000,750000,520000,545000
+CAR002,Hyundai,Creta,SX,Black,Diesel,Manual,2020-06,2020,2020-07-10,2020,Hyderabad,58000,2,1350000,1550000,1050000,1100000
+CAR003,Tata,Nexon,XZ Plus,Blue,Petrol,Manual,2022-02,2022,2022-03-20,2022,Hyderabad,28000,1,900000,1030000,760000,790000
+CAR004,Mahindra,Thar,AX7,Red,Diesel,Automatic,2023-05,2023,2023-06-12,2023,Hyderabad,18000,1,1700000,1900000,1420000,1480000
+CAR005,Toyota,Innova Crysta,ZX,White,Diesel,Automatic,2021-09,2021,2021-10-08,2021,Hyderabad,72000,1,2100000,2350000,1750000,1820000

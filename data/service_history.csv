@@ -1,0 +1,6 @@
+service_id,vehicle_id,service_date,odometer_km,service_type,service_center,work_performed,parts_replaced,service_cost,next_service_due,notes
+SVC001,CAR001,2022-07-10,12000,Regular,Maruti authorized,Periodic service,Oil and filters,4500,2023-01-10,Development/sample record
+SVC002,CAR001,2023-08-05,25000,Regular,Maruti authorized,Periodic service,Oil and filters,6200,2024-02-05,Development/sample record
+SVC003,CAR002,2021-05-18,15000,Regular,Hyundai authorized,Periodic service,Oil and filters,7000,2022-05-18,Development/sample record
+SVC004,CAR002,2023-01-22,40000,Major,Hyundai authorized,Major service,Filters brake service,18500,2024-01-22,Development/sample record
+SVC005,CAR004,2024-02-14,10000,Regular,Mahindra authorized,Periodic service,Oil and filters,6500,2024-08-14,Development/sample record

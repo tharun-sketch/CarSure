@@ -1,0 +1,6 @@
+listing_id,vehicle_id,dealer_name,market_price,location,price_date
+L001,CAR001,Hyderabad Dealer,525000,Hyderabad,2026-09-01
+L002,CAR002,Hyderabad Dealer,1080000,Hyderabad,2026-09-01
+L003,CAR003,Hyderabad Dealer,775000,Hyderabad,2026-09-01
+L004,CAR004,Hyderabad Dealer,1450000,Hyderabad,2026-09-01
+L005,CAR005,Hyderabad Dealer,1780000,Hyderabad,2026-09-01

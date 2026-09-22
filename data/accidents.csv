@@ -1,0 +1,4 @@
+accident_id,vehicle_id,accident_date,owner_at_time,accident_side,affected_area,severity,repair_details,insurance_claim,claim_amount,evidence_source,notes
+ACC001,CAR001,2023-08-12,1,Front-Right,Front bumper and fender,Minor,Bumper and fender repair,Yes,45000,Insurance record,Development/sample record
+ACC002,CAR002,2022-11-20,1,Rear,Rear bumper and boot,Moderate,Rear body repair and paint,Yes,120000,Insurance record,Development/sample record
+ACC003,CAR004,2024-06-15,1,Left-Side,Left door panel,Minor,Door panel repair,No,0,Owner provided,Development/sample record

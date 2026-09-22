@@ -1,0 +1,121 @@
+vehicle_id,brand,model,variant,colour,fuel_type,transmission,manufacture_year,registration_year,registration_location,current_km,owner_count,original_ex_showroom_price,original_onroad_price,current_market_value
+CAR001,Maruti Suzuki,Swift,VXi,White,Petrol,Manual,2021,2021,Hyderabad,42000,1,620000,750000,520000
+CAR002,Hyundai,i20,Sportz,Black,Petrol,Manual,2017,2017,Delhi,112470,1,870000,1030000,235000
+CAR003,Kia,Sonet,HTX,White,Diesel,Manual,2018,2018,Bengaluru,94755,1,1205000,1420000,340000
+CAR004,Nissan,Magnite,XV Premium,Blue,Petrol,Manual,2017,2017,Pune,105892,1,945000,1120000,235000
+CAR005,Mahindra,XUV700,AX5,White,Diesel,Automatic,2024,2024,Bengaluru,21892,1,1860000,2195000,1555000
+CAR006,MG,Hector,Sharp,Grey,Petrol,Automatic,2022,2022,Pune,62212,1,1845000,2180000,970000
+CAR007,Hyundai,i20,Sportz,White,Petrol,Manual,2022,2022,Mumbai,54906,1,890000,1050000,555000
+CAR008,Hyundai,i20,Sportz,Blue,Petrol,Manual,2023,2023,Kolkata,31774,1,820000,970000,540000
+CAR009,Volkswagen,Polo,GT TSI,Blue,Petrol,Automatic,2020,2020,Chennai,76883,1,1235000,1455000,475000
+CAR010,Hyundai,Creta,SX,Silver,Petrol,Manual,2020,2020,Chennai,74177,1,1305000,1535000,525000
+CAR011,Tata,Punch,Accomplished,Grey,Petrol,Manual,2022,2022,Delhi,30780,1,845000,995000,500000
+CAR012,Hyundai,Creta,SX,Black,Petrol,Manual,2019,2019,Chennai,74884,2,1530000,1805000,485000
+CAR013,Kia,Sonet,HTX,White,Diesel,Manual,2020,2020,Hyderabad,74828,1,1230000,1450000,490000
+CAR014,Honda,City,ZX,Red,Petrol,CVT,2023,2023,Chennai,49190,1,1390000,1640000,880000
+CAR015,Mahindra,Thar,AX7,Blue,Diesel,Automatic,2024,2024,Chennai,21968,2,1805000,2135000,1395000
+CAR016,Tata,Nexon,XZ Plus,Grey,Petrol,Manual,2020,2020,Pune,67100,1,1145000,1350000,485000
+CAR017,Hyundai,Venue,SX,Black,Petrol,Manual,2023,2023,Hyderabad,36998,1,1045000,1235000,675000
+CAR018,Maruti Suzuki,Baleno,Zeta,Blue,Petrol,Manual,2018,2018,Hyderabad,90594,1,760000,895000,220000
+CAR019,Skoda,Kushaq,Style,Red,Petrol,Automatic,2023,2023,Mumbai,33374,3,1810000,2140000,1175000
+CAR020,Maruti Suzuki,Swift,VXi,Grey,Petrol,Manual,2018,2018,Chennai,95878,2,740000,870000,185000
+CAR021,Hyundai,i20,Sportz,White,Petrol,Manual,2021,2022,Delhi,50480,1,915000,1080000,495000
+CAR022,Toyota,Innova Crysta,ZX,White,Diesel,Automatic,2025,2025,Chennai,19402,1,2485000,2935000,2110000
+CAR023,Nissan,Magnite,XV Premium,Black,Petrol,Manual,2020,2020,Kolkata,61012,1,840000,990000,355000
+CAR024,Nissan,Magnite,XV Premium,White,Petrol,Manual,2017,2017,Chennai,96046,1,955000,1130000,285000
+CAR025,Kia,Seltos,HTX,Red,Diesel,Manual,2020,2021,Hyderabad,73771,1,1330000,1570000,570000
+CAR026,Renault,Kiger,RXZ,Black,Petrol,Manual,2018,2018,Pune,102646,1,1050000,1240000,265000
+CAR027,Kia,Sonet,HTX,Red,Diesel,Manual,2019,2019,Bengaluru,85542,1,1120000,1320000,350000
+CAR028,Kia,Sonet,HTX,Blue,Diesel,Manual,2020,2020,Pune,70959,1,1235000,1460000,500000
+CAR029,Nissan,Magnite,XV Premium,White,Petrol,Manual,2024,2024,Mumbai,21290,1,830000,980000,635000
+CAR030,Kia,Sonet,HTX,White,Diesel,Manual,2020,2020,Hyderabad,67854,1,1205000,1420000,485000
+CAR031,Mahindra,XUV700,AX5,White,Diesel,Automatic,2018,2018,Chennai,105514,2,1565000,1850000,410000
+CAR032,Renault,Kiger,RXZ,Red,Petrol,Manual,2020,2020,Bengaluru,74916,1,990000,1170000,375000
+CAR033,Renault,Kiger,RXZ,Blue,Petrol,Manual,2023,2023,Pune,32534,1,900000,1060000,670000
+CAR034,MG,Hector,Sharp,Blue,Petrol,Automatic,2024,2025,Hyderabad,17907,1,2080000,2455000,1530000
+CAR035,Maruti Suzuki,Baleno,Zeta,White,Petrol,Manual,2023,2023,Bengaluru,41505,2,810000,955000,560000
+CAR036,Kia,Sonet,HTX,Grey,Diesel,Manual,2024,2024,Kolkata,33278,1,1085000,1280000,870000
+CAR037,Hyundai,Creta,SX,Blue,Petrol,Manual,2024,2025,Kolkata,32381,1,1540000,1815000,1105000
+CAR038,Maruti Suzuki,Swift,VXi,Black,Petrol,Manual,2018,2018,Pune,88447,2,770000,910000,225000
+CAR039,Renault,Kiger,RXZ,Black,Petrol,Manual,2020,2020,Pune,69217,2,955000,1125000,395000
+CAR040,Toyota,Innova Crysta,ZX,Blue,Diesel,Automatic,2024,2025,Mumbai,19687,1,2600000,3065000,2000000
+CAR041,Renault,Kiger,RXZ,White,Petrol,Manual,2019,2019,Mumbai,82329,1,900000,1060000,290000
+CAR042,Maruti Suzuki,Baleno,Zeta,Silver,Petrol,Manual,2022,2022,Kolkata,55312,1,735000,865000,450000
+CAR043,Nissan,Magnite,XV Premium,White,Petrol,Manual,2019,2019,Hyderabad,96206,3,815000,960000,245000
+CAR044,Tata,Harrier,XZA,Silver,Diesel,Automatic,2018,2018,Mumbai,99254,2,2155000,2540000,595000
+CAR045,Mahindra,XUV700,AX5,Blue,Diesel,Automatic,2017,2017,Mumbai,102193,1,1875000,2210000,510000
+CAR046,Honda,City,ZX,Grey,Petrol,CVT,2021,2021,Pune,59677,2,1355000,1600000,660000
+CAR047,Tata,Nexon,XZ Plus,White,Petrol,Manual,2021,2021,Mumbai,74081,1,1070000,1260000,510000
+CAR048,Hyundai,Venue,SX,Red,Petrol,Manual,2018,2018,Chennai,96783,1,970000,1145000,260000
+CAR049,Hyundai,Creta,SX,Silver,Petrol,Manual,2020,2020,Delhi,69308,1,1445000,1705000,600000
+CAR050,Kia,Seltos,HTX,Red,Diesel,Manual,2025,2025,Delhi,10022,2,1305000,1540000,1120000
+CAR051,Hyundai,i20,Sportz,White,Petrol,Manual,2019,2019,Bengaluru,87214,1,870000,1025000,295000
+CAR052,Toyota,Innova Crysta,ZX,Black,Diesel,Automatic,2021,2021,Kolkata,52723,2,2520000,2975000,1335000
+CAR053,Toyota,Innova Crysta,ZX,White,Diesel,Automatic,2025,2025,Pune,7484,1,2810000,3320000,2655000
+CAR054,Toyota,Innova Crysta,ZX,Black,Diesel,Automatic,2017,2017,Chennai,116238,1,2305000,2720000,625000
+CAR055,Tata,Punch,Accomplished,Red,Petrol,Manual,2024,2024,Hyderabad,26958,2,895000,1055000,645000
+CAR056,Tata,Nexon,XZ Plus,Red,Petrol,Manual,2025,2025,Pune,12873,2,960000,1130000,870000
+CAR057,Tata,Nexon,XZ Plus,White,Petrol,Manual,2017,2017,Bengaluru,116717,1,1030000,1215000,285000
+CAR058,Mahindra,XUV700,AX5,Silver,Diesel,Automatic,2018,2019,Delhi,89681,2,1735000,2050000,455000
+CAR059,Tata,Nexon,XZ Plus,Black,Petrol,Manual,2020,2020,Hyderabad,69051,3,995000,1170000,385000
+CAR060,Tata,Punch,Accomplished,Blue,Petrol,Manual,2022,2022,Chennai,50665,2,860000,1010000,450000
+CAR061,Tata,Punch,Accomplished,Silver,Petrol,Manual,2018,2018,Kolkata,98349,2,850000,1005000,225000
+CAR062,Toyota,Fortuner,4x2,Black,Diesel,Automatic,2022,2022,Delhi,35261,2,3520000,4155000,1960000
+CAR063,Mahindra,Thar,AX7,White,Diesel,Automatic,2023,2024,Chennai,32214,1,1770000,2090000,1195000
+CAR064,Volkswagen,Polo,GT TSI,Red,Petrol,Automatic,2025,2025,Hyderabad,10548,2,1155000,1365000,1010000
+CAR065,Hyundai,i20,Sportz,Grey,Petrol,Manual,2021,2021,Mumbai,63636,1,845000,1000000,430000
+CAR066,MG,Hector,Sharp,Silver,Petrol,Automatic,2022,2022,Mumbai,50317,2,2080000,2455000,1280000
+CAR067,Hyundai,i20,Sportz,White,Petrol,Manual,2023,2023,Hyderabad,35329,1,950000,1120000,625000
+CAR068,Nissan,Magnite,XV Premium,Blue,Petrol,Manual,2025,2025,Bengaluru,5000,2,980000,1155000,835000
+CAR069,Volkswagen,Polo,GT TSI,Grey,Petrol,Automatic,2023,2023,Delhi,35761,3,1070000,1260000,645000
+CAR070,Hyundai,i20,Sportz,Silver,Petrol,Manual,2021,2021,Delhi,60542,1,935000,1100000,430000
+CAR071,Kia,Seltos,HTX,Blue,Diesel,Manual,2025,2026,Delhi,34169,1,1365000,1615000,1115000
+CAR072,Tata,Punch,Accomplished,White,Petrol,Manual,2021,2021,Bengaluru,58268,1,855000,1010000,405000
+CAR073,MG,Hector,Sharp,Blue,Petrol,Automatic,2022,2022,Pune,50713,1,1945000,2295000,1135000
+CAR074,Tata,Punch,Accomplished,Blue,Petrol,Manual,2018,2018,Hyderabad,106285,1,825000,975000,210000
+CAR075,Mahindra,XUV700,AX5,Black,Diesel,Automatic,2021,2021,Bengaluru,66767,2,1670000,1970000,825000
+CAR076,Renault,Kiger,RXZ,Blue,Petrol,Manual,2018,2018,Delhi,108625,1,970000,1145000,265000
+CAR077,Skoda,Kushaq,Style,Blue,Petrol,Automatic,2024,2024,Kolkata,11383,1,1710000,2015000,1390000
+CAR078,Hyundai,i20,Sportz,Blue,Petrol,Manual,2023,2023,Hyderabad,27085,1,855000,1010000,555000
+CAR079,Kia,Sonet,HTX,Silver,Diesel,Manual,2020,2020,Pune,66903,2,1290000,1525000,535000
+CAR080,Nissan,Magnite,XV Premium,Silver,Petrol,Manual,2025,2025,Delhi,5000,1,955000,1130000,885000
+CAR081,Nissan,Magnite,XV Premium,Black,Petrol,Manual,2023,2023,Pune,36617,1,945000,1115000,610000
+CAR082,Toyota,Fortuner,4x2,Blue,Diesel,Automatic,2021,2021,Kolkata,51725,1,3990000,4705000,2170000
+CAR083,Nissan,Magnite,XV Premium,Silver,Petrol,Manual,2024,2024,Chennai,37949,1,965000,1140000,690000
+CAR084,Mahindra,XUV700,AX5,Red,Diesel,Automatic,2021,2021,Bengaluru,52950,1,1725000,2035000,935000
+CAR085,Mahindra,XUV700,AX5,White,Diesel,Automatic,2023,2023,Chennai,33101,2,1630000,1925000,1165000
+CAR086,Kia,Sonet,HTX,Silver,Diesel,Manual,2024,2024,Kolkata,31321,1,1160000,1370000,940000
+CAR087,Hyundai,Venue,SX,Red,Petrol,Manual,2017,2017,Hyderabad,96922,2,1175000,1385000,315000
+CAR088,Volkswagen,Polo,GT TSI,Silver,Petrol,Automatic,2021,2021,Delhi,45532,1,1250000,1470000,605000
+CAR089,Kia,Sonet,HTX,Silver,Diesel,Manual,2020,2020,Pune,73661,1,1180000,1390000,515000
+CAR090,Honda,City,ZX,Black,Petrol,CVT,2023,2024,Mumbai,38338,2,1335000,1575000,865000
+CAR091,Maruti Suzuki,Swift,VXi,White,Petrol,Manual,2023,2023,Pune,43036,1,730000,860000,480000
+CAR092,Tata,Nexon,XZ Plus,Silver,Petrol,Manual,2024,2024,Pune,28697,1,1000000,1175000,825000
+CAR093,Honda,City,ZX,Silver,Petrol,CVT,2022,2022,Hyderabad,50672,1,1450000,1710000,885000
+CAR094,Renault,Kiger,RXZ,Grey,Petrol,Manual,2017,2017,Hyderabad,101879,1,1045000,1235000,270000
+CAR095,Maruti Suzuki,Baleno,Zeta,White,Petrol,Manual,2017,2017,Bengaluru,110090,1,785000,925000,220000
+CAR096,Tata,Nexon,XZ Plus,Black,Petrol,Manual,2024,2024,Chennai,26637,1,1125000,1330000,810000
+CAR097,Volkswagen,Polo,GT TSI,Blue,Petrol,Automatic,2019,2019,Kolkata,77570,1,1210000,1425000,385000
+CAR098,Tata,Punch,Accomplished,Grey,Petrol,Manual,2021,2021,Pune,76791,1,780000,920000,380000
+CAR099,Skoda,Kushaq,Style,Blue,Petrol,Automatic,2020,2020,Delhi,76264,1,1540000,1815000,600000
+CAR100,Kia,Seltos,HTX,Grey,Diesel,Manual,2018,2018,Delhi,87227,2,1595000,1885000,425000
+CAR101,Volkswagen,Polo,GT TSI,White,Petrol,Automatic,2018,2018,Kolkata,103083,1,1185000,1395000,330000
+CAR102,Renault,Kiger,RXZ,Blue,Petrol,Manual,2018,2018,Pune,104670,3,965000,1135000,250000
+CAR103,Tata,Nexon,XZ Plus,Blue,Petrol,Manual,2023,2023,Kolkata,39715,2,995000,1175000,665000
+CAR104,Kia,Sonet,HTX,Blue,Diesel,Manual,2024,2024,Chennai,21791,1,1170000,1385000,890000
+CAR105,Mahindra,XUV700,AX5,Black,Diesel,Automatic,2018,2018,Mumbai,89216,2,1695000,2000000,445000
+CAR106,Tata,Harrier,XZA,Grey,Diesel,Automatic,2023,2023,Bengaluru,35306,1,1975000,2330000,1440000
+CAR107,Volkswagen,Polo,GT TSI,Red,Petrol,Automatic,2021,2021,Chennai,63070,1,1140000,1345000,575000
+CAR108,Kia,Sonet,HTX,White,Diesel,Manual,2017,2017,Pune,108117,3,1185000,1400000,305000
+CAR109,Renault,Kiger,RXZ,Silver,Petrol,Manual,2025,2025,Pune,25081,1,1050000,1240000,905000
+CAR110,Toyota,Fortuner,4x2,Silver,Diesel,Automatic,2017,2017,Chennai,113631,1,3300000,3890000,830000
+CAR111,Hyundai,Venue,SX,Grey,Petrol,Manual,2022,2022,Delhi,40285,1,1075000,1265000,595000
+CAR112,Kia,Sonet,HTX,Grey,Diesel,Manual,2022,2022,Bengaluru,38361,2,1140000,1350000,720000
+CAR113,Hyundai,i20,Sportz,Red,Petrol,Manual,2020,2021,Delhi,76342,1,885000,1040000,385000
+CAR114,Tata,Punch,Accomplished,Grey,Petrol,Manual,2020,2020,Kolkata,69988,2,805000,950000,300000
+CAR115,Nissan,Magnite,XV Premium,Grey,Petrol,Manual,2021,2021,Bengaluru,66426,2,825000,975000,420000
+CAR116,Kia,Seltos,HTX,White,Diesel,Manual,2017,2018,Mumbai,112259,1,1580000,1865000,445000
+CAR117,Kia,Seltos,HTX,Silver,Diesel,Manual,2019,2019,Hyderabad,83344,2,1635000,1930000,555000
+CAR118,Hyundai,Venue,SX,Grey,Petrol,Manual,2021,2021,Hyderabad,52378,1,1075000,1265000,575000
+CAR119,Toyota,Innova Crysta,ZX,Silver,Diesel,Automatic,2024,2024,Mumbai,10366,2,2420000,2855000,1855000
+CAR120,Maruti Suzuki,Baleno,Zeta,Grey,Petrol,Manual,2019,2019,Bengaluru,85926,2,760000,895000,260000
